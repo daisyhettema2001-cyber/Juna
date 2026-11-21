@@ -116,6 +116,19 @@ export function markeerGemaakt(set: string[]): { nieuw: number; nieuweIds: strin
   return { nieuw: nieuw.length, nieuweIds: nieuw, alVandaag: false };
 }
 
+/* Haalt "gemaakt" van vandaag weer weg en zet het nieuwe fruit terug uit het fruitboek. */
+export function maakGemaaktOngedaan(set: string[], nieuweIds: string[]): void {
+  try {
+    const raw = JSON.parse(localStorage.getItem(GEMAAKT_KEY) ?? "null") as { dag: string; sets: string[] } | null;
+    if (raw && Array.isArray(raw.sets)) {
+      localStorage.setItem(GEMAAKT_KEY, JSON.stringify({ dag: raw.dag, sets: raw.sets.filter((k) => k !== sleutel(set)) }));
+    }
+  } catch {
+    /* ignore */
+  }
+  if (nieuweIds.length) boekStore.bewaar(boekStore.laad().filter((id) => !nieuweIds.includes(id)));
+}
+
 /* ---- boodschappenlijstje ---- */
 export type LijstItem = { ing?: string; naam: string; bron: string[]; klaar: boolean };
 const LEEG_LIJST: LijstItem[] = [];

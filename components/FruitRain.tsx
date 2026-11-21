@@ -9,7 +9,7 @@ import { HOUDBAAR } from "@/lib/porties";
 import PimpSap from "@/components/PimpSap";
 import { advies, type Machine } from "@/lib/advies";
 import { PHASES } from "@/lib/data";
-import { bewaardStore, isBewaard, markeerGemaakt, vastStore, wisselBewaard, zetOpLijst } from "@/lib/mijn";
+import { bewaardStore, isBewaard, maakGemaaktOngedaan, markeerGemaakt, vastStore, wisselBewaard, zetOpLijst } from "@/lib/mijn";
 import { ING, fasesMet, schudSet, weekId, weekSet, type Ingredient } from "@/lib/ingredients";
 
 const OFFSET = 90; // de lege ruimte boven de stapel halen we weg
@@ -107,7 +107,6 @@ function vliegNaarBoek(ids: string[], vanKnop: HTMLElement | null) {
       img.setAttribute("aria-hidden", "true");
       img.style.cssText = `position:fixed;z-index:60;left:${sx - size / 2}px;top:${sy - size / 2}px;width:${size}px;height:${size}px;pointer-events:none;will-change:transform`;
       document.body.appendChild(img);
-      if (zichtbaar) els.forEach((e) => (e.style.visibility = "hidden"));
       const delay = n * 160;
       n++;
       const a = img.animate(
@@ -161,6 +160,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
   const vast = vastStore.useHook();
   const bewaardLijst = bewaardStore.useHook();
   const [status, setStatus] = useState("");
+  const [terug, setTerug] = useState<{ set: string[]; ids: string[] } | null>(null);
   const [machine, setMachine] = useState<Machine>(() => loadMachine());
   const [gesloten, setGesloten] = useState<string>("");
   const current = sets[sets.length - 1] ?? [];
@@ -185,6 +185,11 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
       /* opslag niet beschikbaar */
     }
   }, [phaseId, sets]);
+
+  // Andere set of fase: de "Ongedaan maken"-knop hoort niet meer bij het getoonde sapje.
+  useEffect(() => {
+    setTerug(null);
+  }, [phaseId, current.join(",")]);
 
   // Eerst de oude stapel weghalen (leeg vak), dan pas de nieuwe laten vallen.
   const [leeg, setLeeg] = useState(false);
@@ -312,11 +317,30 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
             onClick={(e) => {
               const r = markeerGemaakt(current);
               vliegNaarBoek(r.nieuweIds, e.currentTarget);
-              setStatus(r.alVandaag ? "Dit sapje heb je vandaag al afgevinkt." : r.nieuw ? `Mooi! ${r.nieuw} ${r.nieuw === 1 ? "nieuw fruit" : "nieuwe"} in je fruitboek.` : "Alles hiervan stond al in je fruitboek.");
+              if (r.alVandaag) {
+                setStatus("Dit sapje heb je vandaag al toegevoegd aan je fruitboek.");
+                return;
+              }
+              setTerug({ set: [...current], ids: r.nieuweIds });
+              setStatus(r.nieuw ? `Klaar! ${r.nieuw} ${r.nieuw === 1 ? "nieuw fruit" : "nieuwe fruitsoorten"} in je fruitboek.` : "Alles hiervan stond al in je fruitboek.");
             }}
           >
-            Ik heb dit gemaakt
+            Sapje gemaakt? Zet in fruitboek
           </button>
+          <p className="fr-tip" style={{ margin: 0 }}>Je fruit blijft gewoon staan. Alleen je fruitboek wordt bijgewerkt.</p>
+          {terug ? (
+            <button
+              type="button"
+              className="fr-undo"
+              onClick={() => {
+                maakGemaaktOngedaan(terug.set, terug.ids);
+                setTerug(null);
+                setStatus("Teruggedraaid. Het fruit is weer uit je fruitboek gehaald.");
+              }}
+            >
+              Ongedaan maken
+            </button>
+          ) : null}
           <div className="fr-acties2">
             <button type="button" onClick={() => setStatus(`${zetOpLijst(current, `${weekId()}:${phaseId}`) ? "Op je boodschappenlijstje gezet." : "Stond al op je lijstje."}`)}>
               Zet op lijstje
