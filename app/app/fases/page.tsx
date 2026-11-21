@@ -81,7 +81,7 @@ export default function Fases() {
         <h2 style={{ fontWeight: 700, fontSize: 17, color: p.dark }}>Waar Juna op let</h2>
         <p style={{ fontSize: 14, lineHeight: 1.45 }}>{p.focus}</p>
         <p style={{ fontSize: 13, lineHeight: 1.45, color: "var(--ink-2)" }}>
-          Je sapje van de week verschijnt zodra deze fase begint. Jij bepaalt mee.
+          Je sapje van de week verschijnt zodra deze fase begint.
         </p>
       </section>
     </main>
