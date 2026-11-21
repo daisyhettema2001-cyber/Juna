@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconBook, IconCart, IconCycle, IconHome, IconSparkle } from "./Icons";
+import { IconBook, IconCart, IconCycle, IconHome } from "./Icons";
 import { lijstStore } from "@/lib/mijn";
 
 const TABS = [
@@ -10,7 +10,6 @@ const TABS = [
   { href: "/app/fases", label: "Fases", Icon: IconCycle },
   { href: "/app/lijstje", label: "Lijstje", Icon: IconCart },
   { href: "/app/fruitboek", label: "Fruitboek", Icon: IconBook },
-  { href: "/app/glow", label: "Extra", Icon: IconSparkle },
 ];
 
 export default function TabBar() {

@@ -9,7 +9,6 @@ import { IconSparkle, IconWave } from "@/components/Icons";
 import { computeToday, useCycle } from "@/lib/cycle";
 import { getPhase, getRecipe } from "@/lib/data";
 import { tipLink, weekTips } from "@/lib/tips";
-import ExtraBlok from "@/components/ExtraBlok";
 import { useVoorkeuren } from "@/lib/voorkeuren";
 
 const fmt = new Intl.DateTimeFormat("nl-NL", { weekday: "long", day: "numeric", month: "long" });
@@ -70,8 +69,6 @@ export default function Vandaag() {
           <FruitRain key={uitgesloten.join(",")} phase={{ ...phase, recipeName: recipe.name }} uitgesloten={uitgesloten} />
         </div>
       </div>
-
-      <ExtraBlok uitgesloten={uitgesloten} kleur={phase.dark} tint={phase.tint} />
 
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>

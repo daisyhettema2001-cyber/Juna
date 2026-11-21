@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { PHASES, getRecipe } from "@/lib/data";
-import { MEEDENK, UITLEG } from "@/lib/extras";
-import { IconSparkle, IconWave, Logo, PhaseIcon } from "@/components/Icons";
+import { Logo, PhaseIcon } from "@/components/Icons";
 
 const phaseDays: Record<string, string> = {
   menstruatie: "Dag 1–5",
@@ -22,7 +21,6 @@ export default function Home() {
         <nav aria-label="Hoofdmenu" className="site-nav">
           <a href="#hoe">Hoe het werkt</a>
           <a href="#fases">De 4 fases</a>
-          <a href="#glow">Huid &amp; haar</a>
           <a href="#privacy">Jouw data</a>
         </nav>
         <Link href="/app" className="btn btn-dark btn-pill" style={{ minHeight: 46, fontSize: 15 }}>
@@ -79,11 +77,11 @@ export default function Home() {
                   </span>
                 </div>
                 <div style={{ borderRadius: 20, background: "#fff", padding: 14, display: "flex", flexDirection: "column", gap: 6 }}>
-                  <span className="eyebrow" style={{ color: "var(--berry-d)" }}>Huid-extra</span>
+                  <span className="eyebrow" style={{ color: "var(--berry-d)" }}>Huid-tip</span>
                   <span style={{ fontSize: 13, lineHeight: 1.4 }}>Je huid kan nu wat vetter zijn. Kies vandaag voor komkommer en munt.</span>
                 </div>
                 <div style={{ borderRadius: 20, background: "var(--green-t)", padding: 14, display: "flex", flexDirection: "column", gap: 6 }}>
-                  <span className="eyebrow" style={{ color: "var(--green-d)" }}>Haar-extra</span>
+                  <span className="eyebrow" style={{ color: "var(--green-d)" }}>Haar-tip</span>
                   <span style={{ fontSize: 13, lineHeight: 1.4 }}>Strooi pompoenpitten over je smoothie voor extra zink.</span>
                 </div>
               </div>
@@ -98,7 +96,7 @@ export default function Home() {
               {[
                 { n: "1", c: "#F59CBD", t: "Vul je cyclus in", d: "Vul de eerste dag van je laatste menstruatie in. Meer heeft Juna niet nodig om te weten in welke fase je zit." },
                 { n: "2", c: "#9BD69A", t: "Krijg je sap van de week", d: "Elke fase een nieuw recept, met ingrediënten en een korte uitleg waarom het past bij wat je lichaam nu doet." },
-                { n: "3", c: "#F7B66E", t: "Kies een extra", d: "Wil je extra aandacht voor je huid of je haar? Kies dat erbij. Juna geeft je sapjes en tips die bij je fase passen." },
+                { n: "3", c: "#F7B66E", t: "Maak je lijstje", d: "Juna zet de boodschappen voor 1, 2 of 3 sapjes voor je klaar, en zegt wat je overhoudt." },
               ].map((s) => (
                 <div key={s.n} className="step-card">
                   <span className="display" style={{ fontSize: 48, color: s.c }}>{s.n}</span>
@@ -148,45 +146,6 @@ export default function Home() {
           </p>
         </section>
 
-        <section id="glow" style={{ background: "var(--berry-t)" }}>
-          <div className="container section" style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 720 }}>
-              <h2 className="section-title">Extra steun voor je huid of haar</h2>
-              <p className="lead" style={{ fontSize: 18 }}>
-                Je sapje van de week volgt je cyclus. Wil je er iets extra&apos;s bij? Kies dan een extra voor je huid of je haar. Die komt erbovenop, niet in plaats van je fase.
-              </p>
-            </div>
-            <div className="grid-auto-wide">
-              {[
-                { title: "Voor je huid", icon: <IconSparkle size={26} color="#B35A0F" />, tile: "var(--orange-t)", text: `${UITLEG.huid} ${MEEDENK.huid}`, toe: "Bijvoorbeeld avocado, kiwi of wortel.", shot: "Een klein shotje van ongeveer 60 ml, zoals een oranje huidshotje met wortel en sinaasappel." },
-                { title: "Voor je haar", icon: <IconWave size={26} color="var(--green-d)" />, tile: "var(--green-t)", text: `${UITLEG.haar} ${MEEDENK.haar}`, toe: "Bijvoorbeeld pompoenpitten, amandelen of spinazie.", shot: "Een klein shotje van ongeveer 60 ml, zoals een groen haarshotje met spinazie, appel en citroen." },
-              ].map((g) => (
-                <div key={g.title} className="goal-card">
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <span className="letter-tile" style={{ width: 52, height: 52, borderRadius: 16, background: g.tile }}>{g.icon}</span>
-                    <h3 className="display" style={{ fontSize: 30 }}>{g.title}</h3>
-                  </div>
-                  <p style={{ lineHeight: 1.55, color: "var(--ink-2)" }}>{g.text}</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    <div className="row-item" style={{ cursor: "default" }}>
-                      <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                        <strong>Voeg toe aan je sapje</strong>
-                        <span style={{ fontSize: 14, color: "var(--muted)" }}>{g.toe}</span>
-                      </span>
-                    </div>
-                    <div className="row-item" style={{ cursor: "default" }}>
-                      <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                        <strong>Of maak een shotje</strong>
-                        <span style={{ fontSize: 14, color: "var(--muted)" }}>{g.shot}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section id="privacy" className="container section" style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 720 }}>
           <h2 className="section-title">Jouw data blijft van jou.</h2>
           <p className="lead" style={{ fontSize: 18 }}>
@@ -204,7 +163,7 @@ export default function Home() {
                 Begin gratis. Later: Juna Plus voor alle recepten.
               </h2>
               <p style={{ fontSize: 17, lineHeight: 1.55, color: "#EDE6FA" }}>
-                Gratis: je sap van de week. Plus: alle recepten, extra's voor huid en haar, boodschappenlijstjes en
+                Gratis: je sap van de week. Plus: alle recepten, tips voor je huid en haar, boodschappenlijstjes en
                 weekplanning.
               </p>
             </div>

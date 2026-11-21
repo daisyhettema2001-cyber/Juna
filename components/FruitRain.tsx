@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import type { Phase, PhaseId } from "@/lib/data";
 
 import { HOUDBAAR } from "@/lib/porties";
+import PimpSap from "@/components/PimpSap";
 import { advies, type Machine } from "@/lib/advies";
 import { PHASES } from "@/lib/data";
 import { bewaardStore, isBewaard, markeerGemaakt, vastStore, wisselBewaard, zetOpLijst } from "@/lib/mijn";
@@ -334,6 +335,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
           </div>
           <span role="status" aria-live="polite" className="fr-status">{status}</span>
         </div>
+        <PimpSap set={current} uitgesloten={uitgesloten} machine={machine} kleur={phase.dark} />
         <p className="fr-tip">{adv.tip}</p>
         <div className="fr-machine" role="group" aria-label="Welk apparaat heb je?">
           <span>Ik heb:</span>

@@ -52,7 +52,5 @@ export function weekTips(phase: PhaseId, uitgesloten: string[] = [], d = new Dat
 }
 
 export function tipLink(tip: Tip): string | null {
-  if (tip.soort === "Huid") return "/app/glow";
-  if (tip.soort === "Haar") return "/app/glow?doel=haar";
   return null;
 }
