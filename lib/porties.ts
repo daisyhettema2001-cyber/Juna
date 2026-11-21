@@ -81,7 +81,7 @@ export const BEWAAR: Record<"mixer" | "slowjuicer" | "beide", string> = {
 
 /** korte regel bij het sapje zelf */
 export const HOUDBAAR: Record<"mixer" | "slowjuicer" | "beide", string> = {
-  mixer: "Smoothie uit de blender: drink hem dezelfde dag, uiterlijk binnen 24 uur.",
-  slowjuicer: "Sap uit je slowjuicer (cold press): 1 tot 2 dagen in de koelkast, hooguit 3 dagen.",
-  beide: "Blender: dezelfde dag drinken, uiterlijk binnen 24 uur. Slowjuicer (cold press): 1 tot 2 dagen in de koelkast, hooguit 3 dagen.",
+  mixer: "Blender: vandaag drinken.",
+  slowjuicer: "Slowjuicer: tot 2 dagen in de koelkast.",
+  beide: "Blender: vandaag drinken. Slowjuicer: tot 2 dagen in de koelkast.",
 };

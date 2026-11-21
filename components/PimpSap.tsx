@@ -40,7 +40,7 @@ export default function PimpSap({ set, uitgesloten, machine, kleur }: { set: str
             <span className="dot" style={{ width: 26, height: 26, flex: "none", background: ING[tip.id].kleur, marginTop: 1 }} />
             <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <strong style={{ fontSize: 14.5 }}>Tip voor je {doel === "huid" ? "huid" : "haar"}: voeg {ING[tip.id].naam.toLowerCase()} toe</strong>
-              <span style={{ fontSize: 13, lineHeight: 1.4 }}>{tip.reden} Past goed bij dit sapje.</span>
+              <span style={{ fontSize: 13, lineHeight: 1.4 }}>{tip.reden}</span>
             </span>
           </div>
           <button
