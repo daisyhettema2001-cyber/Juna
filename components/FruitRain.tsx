@@ -318,16 +318,15 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
               const r = markeerGemaakt(current);
               vliegNaarBoek(r.nieuweIds, e.currentTarget);
               if (r.alVandaag) {
-                setStatus("Dit sapje heb je vandaag al toegevoegd aan je fruitboek.");
+                setStatus("Staat al in je fruitboek.");
                 return;
               }
               setTerug({ set: [...current], ids: r.nieuweIds });
-              setStatus(r.nieuw ? `Klaar! ${r.nieuw} ${r.nieuw === 1 ? "nieuw fruit" : "nieuwe fruitsoorten"} in je fruitboek.` : "Alles hiervan stond al in je fruitboek.");
+              setStatus("Toegevoegd aan fruitboek.");
             }}
           >
-            Sapje gemaakt? Zet in fruitboek
+            Gemaakt ✓
           </button>
-          <p className="fr-tip" style={{ margin: 0 }}>Je fruit blijft gewoon staan. Alleen je fruitboek wordt bijgewerkt.</p>
           {terug ? (
             <button
               type="button"
@@ -335,7 +334,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
               onClick={() => {
                 maakGemaaktOngedaan(terug.set, terug.ids);
                 setTerug(null);
-                setStatus("Teruggedraaid. Het fruit is weer uit je fruitboek gehaald.");
+                setStatus("Teruggedraaid.");
               }}
             >
               Ongedaan maken
