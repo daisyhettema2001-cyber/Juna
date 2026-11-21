@@ -1,14 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PhaseIcon } from "@/components/Icons";
 import { computeToday, phaseRanges, useCycle } from "@/lib/cycle";
-import { PHASES, getRecipe, type PhaseId } from "@/lib/data";
-import { receptOk, useVoorkeuren } from "@/lib/voorkeuren";
+import { PHASES, type PhaseId } from "@/lib/data";
 
 export default function Fases() {
-  const { uitgesloten } = useVoorkeuren();
   const cycle = useCycle();
   const [picked, setPicked] = useState<PhaseId>("luteaal");
   const [current, setCurrent] = useState<PhaseId | null>(null);
@@ -80,22 +77,13 @@ export default function Fases() {
         </div>
       </section>
 
-      <h2 style={{ fontWeight: 700, fontSize: 19 }}>Sapjes voor deze fase</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {p.recipes.filter((slug) => receptOk(getRecipe(slug)!, uitgesloten)).map((slug) => {
-          const r = getRecipe(slug)!;
-          return (
-            <Link key={slug} href={`/app/recept/${slug}`} className="list-recipe" style={{ alignItems: "flex-start" }}>
-              <span className="dot" style={{ width: 48, height: 48, background: r.colors[0] }} />
-              <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <strong style={{ fontSize: 16 }}>{r.name}</strong>
-                <span style={{ fontSize: 13 }}>{r.short}</span>
-                <span style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{r.why}</span>
-              </span>
-            </Link>
-          );
-        })}
-      </div>
+      <section style={{ background: p.tint, borderRadius: 20, padding: 16, display: "flex", flexDirection: "column", gap: 8 }}>
+        <h2 style={{ fontWeight: 700, fontSize: 17, color: p.dark }}>Waar Juna op let</h2>
+        <p style={{ fontSize: 14, lineHeight: 1.45 }}>{p.focus}</p>
+        <p style={{ fontSize: 13, lineHeight: 1.45, color: "var(--ink-2)" }}>
+          Je sapje van de week verschijnt zodra deze fase begint. Jij bepaalt mee: schud, zet fruit vast of sluit uit wat je niet lekker vindt.
+        </p>
+      </section>
     </main>
   );
 }

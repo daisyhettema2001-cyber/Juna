@@ -13,6 +13,7 @@ export type Phase = {
   body: string;
   skin: string;
   hair: string;
+  focus: string; // wat Juna in deze fase samenstelt (geen vast sapje)
   recipes: string[]; // recipe slugs, first one = "sap van de week"
 };
 
@@ -45,6 +46,7 @@ export const PHASES: Phase[] = [
     body: "Je lichaam ruimt op en verliest ijzer. Rust, warmte en aanvullen staan centraal.",
     skin: "Oestrogeen en progesteron zijn nu laag. Je huid kan droger of gevoeliger aanvoelen. Vochtrijk eten, zoals komkommer en sinaasappel, is een lekkere keuze.",
     hair: "Een gevarieerd eetpatroon met eiwit, ijzer en zink is een goede basis.",
+    focus: "Ijzer uit onder andere biet en granaatappel. Daarbij vitamine C, want dat helpt je lichaam ijzer op te nemen. Warme smaken zoals gember.",
     recipes: ["rode-reset", "warme-peer"],
   },
   {
@@ -60,6 +62,7 @@ export const PHASES: Phase[] = [
     body: "Je energie komt terug en je hebt zin in nieuwe dingen. Licht, fris en groen past nu.",
     skin: "Je oestrogeen stijgt langzaam. Vitamine C draagt bij aan de normale collageenvorming voor je huid, en zit in kiwi en sinaasappel.",
     hair: "Een gevarieerd eetpatroon met eiwit, ijzer en zink is een goede basis.",
+    focus: "Vitamine C uit kiwi en citrus, en groene bladgroente zoals spinazie. Licht en fris, passend bij je stijgende energie.",
     recipes: ["groene-start", "citrus-kick"],
   },
   {
@@ -75,6 +78,7 @@ export const PHASES: Phase[] = [
     body: "Je voelt je vaak op je best en je huid straalt. Houd die glow vast met antioxidanten.",
     skin: "Rond je ovulatie piekt je oestrogeen. In een overzichtsstudie was de huid dan elastischer dan in de fase ervoor. Wortel levert bètacaroteen, dat je lichaam omzet in vitamine A.",
     hair: "Een gevarieerd eetpatroon met eiwit, ijzer en zink is een goede basis.",
+    focus: "Bètacaroteen uit onder andere wortel en vitamine C uit citrus en ananas. Daarbij antioxidanten uit kurkuma en zwarte peper.",
     recipes: ["gouden-zon", "rode-bessen-glow"],
   },
   {
@@ -90,6 +94,7 @@ export const PHASES: Phase[] = [
     body: "Meer trek in zoet, een opgeblazen gevoel of PMS? Kies voor rust en magnesium.",
     skin: "Progesteron is nu hoog, en dat kan je huid vetter maken. Komkommer en munt zijn lekker fris.",
     hair: "Een gevarieerd eetpatroon met eiwit, ijzer en zink is een goede basis.",
+    focus: "Magnesium uit onder andere cacao en spinazie, en blauwe bes voor antioxidanten. Rustige, zachte smaken.",
     recipes: ["paarse-kalmte", "zoete-wortel"],
   },
 ];
