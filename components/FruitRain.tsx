@@ -160,6 +160,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
   const vast = vastStore.useHook();
   const bewaardLijst = bewaardStore.useHook();
   const [status, setStatus] = useState("");
+  const [gedaan, setGedaan] = useState(false);
   const [terug, setTerug] = useState<{ set: string[]; ids: string[] } | null>(null);
   const [machine, setMachine] = useState<Machine>(() => loadMachine());
   const [gesloten, setGesloten] = useState<string>("");
@@ -189,6 +190,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
   // Andere set of fase: de "Ongedaan maken"-knop hoort niet meer bij het getoonde sapje.
   useEffect(() => {
     setTerug(null);
+    setGedaan(false);
   }, [phaseId, current.join(",")]);
 
   // Eerst de oude stapel weghalen (leeg vak), dan pas de nieuwe laten vallen.
@@ -313,10 +315,11 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
           <button
             type="button"
             className="fr-gemaakt"
-            style={{ background: phase.dark }}
+            style={{ background: phase.dark, opacity: gedaan ? 0.5 : 1, transition: "opacity .25s" }}
             onClick={(e) => {
               const r = markeerGemaakt(current);
               vliegNaarBoek(r.nieuweIds, e.currentTarget);
+              setGedaan(true);
               if (r.alVandaag) {
                 setStatus("Staat al in je fruitboek.");
                 return;
@@ -334,6 +337,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
               onClick={() => {
                 maakGemaaktOngedaan(terug.set, terug.ids);
                 setTerug(null);
+                setGedaan(false);
                 setStatus("Teruggedraaid.");
               }}
             >
