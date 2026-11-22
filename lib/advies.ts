@@ -28,7 +28,7 @@ export function advies(ids: string[], machine: Machine, uitgesloten: string[] = 
   const weinigSap = punten < 6;
   const romig = ids.some((id) => ROMIG.includes(id));
   const opties = (romig
-    ? [["kokos", "kokosmelk"], ["almond", "amandelmelk"], ["haver", "haverdrink"], ["", "water"]]
+    ? [["kokos", "kokosmelk"], ["almond", "amandelmelk"], ["melk", "melk"], ["", "water"]]
     : [["", "water"], ["kokos", "kokoswater"]]
   ).filter(([id]) => !id || !uitgesloten.includes(id));
   const vloeistof = lijst(opties.map(([, naam]) => naam)).replace(/ en ([^ ]+)$/, " of $1");
@@ -36,10 +36,17 @@ export function advies(ids: string[], machine: Machine, uitgesloten: string[] = 
   const bladNamen = ings.filter((i) => i.groep === "blad" || i.id === "parsley" || i.id === "mint").map((i) => i.naam.toLowerCase());
 
   const blenderSet = zacht.length >= 2 || weinigSap;
+  // Bijna alleen stevige ingrediënten (bijv. cacao, dadel, amandel, framboos): dat wordt een dikke smoothie.
+  const stevig = punten <= 3 || zacht.length + poeder.length >= 3;
 
   // De kleine tip onderaan
   let tip: string;
-  if (machine === "mixer") {
+  if (stevig) {
+    tip =
+      machine === "slowjuicer"
+        ? `Dit geeft bijna geen sap. Roer er ongeveer 200 ml ${vloeistof} door, of maak er een smoothie van.`
+        : `Dit wordt een dikke smoothie. Mix met ongeveer 200 ml ${vloeistof}.`;
+  } else if (machine === "mixer") {
     tip = blenderSet
       ? `Voor de blender: mix alles met een scheut ${vloeistof}.`
       : `Voor de blender: mix alles met een glas ${vloeistof} en zeef eventueel. Dan wordt het een smoothie.`;
