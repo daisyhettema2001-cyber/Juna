@@ -286,7 +286,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
       <div className="fruit-stage" onClick={replay} role="img" aria-label={`Fruit van deze week: ${ings.map((i) => i.naam).join(", ")}. Tik om opnieuw af te spelen`} key={run}>
         {leeg ? null : (
           <>
-            <span className={animate ? "fr-glow fr-anim" : "fr-glow"} style={{ left: cq(25), top: cq(150 - OFFSET), width: cq(340), height: cq(260), background: `radial-gradient(closest-side, ${phase.color}38, ${phase.color}00)` }} />
+            <span className={animate ? "fr-glow fr-anim" : "fr-glow"} style={{ left: cq(25), top: cq(235 - OFFSET), width: cq(340), height: cq(260), background: `radial-gradient(closest-side, ${phase.color}38, ${phase.color}00)` }} />
             <span className="fr-ground" style={{ left: cq(45), top: cq(430 - OFFSET), width: cq(300), height: cq(18) }} />
           </>
         )}
