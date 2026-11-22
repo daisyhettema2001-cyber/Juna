@@ -200,8 +200,12 @@ export function kiesSet(phase: PhaseId, seedText: string, vermijd: string[][] = 
     volgorde.find((c) => !vermijd.some((v) => zelfde(v, c)) && (!laatste || overlap(c, laatste) <= 2)) ??
     volgorde.find((c) => !vermijd.some((v) => zelfde(v, c))) ??
     volgorde[0];
-  // Zwarte peper hoort alleen bij kurkuma, en komt dan altijd als 5e onderaan.
-  const kern = kandidaat.filter((id) => id !== "pepper");
+  return metPeper(kandidaat, uitgesloten);
+}
+
+/** Zwarte peper hoort alleen bij kurkuma, en komt dan altijd als 5e onderaan. */
+export function metPeper(set: string[], uitgesloten: string[] = []): string[] {
+  const kern = set.filter((id) => id !== "pepper");
   return kern.includes("turmeric") && !uitgesloten.includes("pepper") ? [...kern, "pepper"] : kern;
 }
 

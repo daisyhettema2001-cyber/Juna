@@ -10,7 +10,7 @@ import PimpSap from "@/components/PimpSap";
 import { advies, type Machine } from "@/lib/advies";
 import { PHASES } from "@/lib/data";
 import { bewaardStore, isBewaard, maakGemaaktOngedaan, markeerGemaakt, vastStore, wisselBewaard, zetOpLijst } from "@/lib/mijn";
-import { ING, fasesMet, schudSet, weekId, weekSet, type Ingredient } from "@/lib/ingredients";
+import { ING, fasesMet, metPeper, schudSet, weekId, weekSet, type Ingredient } from "@/lib/ingredients";
 
 const OFFSET = 90; // de lege ruimte boven de stapel halen we weg
 const W = 390; // breedte van het ontwerp in px; alles hieronder schaalt mee via cqw
@@ -185,8 +185,8 @@ function loadSets(phase: PhaseId, uitgesloten: string[], vast: string | null): s
     const raw = localStorage.getItem(SET_KEY);
     if (raw) {
       const v = JSON.parse(raw) as Saved;
-      const geldig = Array.isArray(v.sets) && v.sets.length > 0 && v.sets.every((st) => Array.isArray(st) && st.length === 4 && st.every((id) => ING[id] && !uitgesloten.includes(id)));
-      if (v.week === weekId() && v.phase === phase && geldig) return v.sets;
+      const geldig = Array.isArray(v.sets) && v.sets.length > 0 && v.sets.every((st) => Array.isArray(st) && st.length >= 4 && st.length <= 5 && st.every((id) => ING[id] && !uitgesloten.includes(id)));
+      if (v.week === weekId() && v.phase === phase && geldig) return v.sets.map((st) => metPeper(st, uitgesloten));
     }
   } catch {
     /* ignore */

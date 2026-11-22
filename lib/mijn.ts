@@ -2,7 +2,7 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import type { PhaseId } from "./data";
-import { ING, schudSet, weekId, weekSet } from "./ingredients";
+import { ING, metPeper, schudSet, weekId, weekSet } from "./ingredients";
 
 /* Alles hier blijft op het apparaat van de gebruiker (localStorage). */
 
@@ -178,7 +178,7 @@ export function weekOver(dagen: number) {
 /** De set voor volgende week: een zelf gekozen set als die er is, anders de vaste keuze van Juna. */
 export function volgendeSet(phase: PhaseId, uitgesloten: string[], vast: string | null, opgeslagen: VolgendeWeek | null): string[] {
   const d = weekOver(7);
-  if (opgeslagen && opgeslagen.week === weekId(d) && opgeslagen.phase === phase && !opgeslagen.ids.some((i) => uitgesloten.includes(i))) return opgeslagen.ids;
+  if (opgeslagen && opgeslagen.week === weekId(d) && opgeslagen.phase === phase && !opgeslagen.ids.some((i) => uitgesloten.includes(i))) return metPeper(opgeslagen.ids, uitgesloten);
   return weekSet(phase, uitgesloten, vast, d);
 }
 
@@ -194,7 +194,7 @@ export function dezeSet(phase: PhaseId, uitgesloten: string[], vast: string | nu
     if (raw) {
       const v = JSON.parse(raw) as { week: string; phase: PhaseId; sets: string[][] };
       const laatste = Array.isArray(v.sets) ? v.sets[v.sets.length - 1] : null;
-      if (v.week === weekId() && v.phase === phase && laatste && laatste.length === 4 && laatste.every((i) => ING[i] && !uitgesloten.includes(i))) return laatste;
+      if (v.week === weekId() && v.phase === phase && laatste && laatste.length >= 4 && laatste.length <= 5 && laatste.every((i) => ING[i] && !uitgesloten.includes(i))) return metPeper(laatste, uitgesloten);
     }
   } catch {
     /* ignore */
