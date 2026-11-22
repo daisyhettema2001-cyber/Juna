@@ -372,11 +372,11 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
             className="fr-gemaakt"
             style={{ background: phase.dark, opacity: gedaan ? 0.5 : 1, transition: "opacity .25s" }}
             onClick={(e) => {
-              const r = markeerGemaakt(current);
+              const r = markeerGemaakt(current, phaseId);
               vliegNaarBoek(r.nieuweIds, e.currentTarget);
               setGedaan(true);
               setTerug({ set: [...current], ids: r.terugIds });
-              setGemaaktMsg(r.alVandaag ? "Staat al in je fruitboek." : "Toegevoegd aan fruitboek.");
+              setGemaaktMsg(r.alVandaag ? "Staat al in je logboek." : "Toegevoegd aan je logboek.");
             }}
           >
             Gemaakt ✓

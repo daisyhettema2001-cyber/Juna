@@ -3,82 +3,201 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCycle } from "@/lib/cycle";
-import { getPhase, getRecipe } from "@/lib/data";
-import { ING } from "@/lib/ingredients";
-import { bewaardStore, boekStore } from "@/lib/mijn";
+import { PHASES, getPhase, getRecipe } from "@/lib/data";
+import { AMT, ING, fasesMet } from "@/lib/ingredients";
+import { bewaardStore, boekStore, logStore, zetNotitie, type LogItem } from "@/lib/mijn";
 
 const datumFmt = new Intl.DateTimeFormat("nl-NL", { day: "numeric", month: "short" });
+const logFmt = new Intl.DateTimeFormat("nl-NL", { weekday: "short", day: "numeric", month: "short" });
+const dagTekst = (iso: string) => {
+  const t = logFmt.format(new Date(iso + "T00:00:00")).replace(".", "");
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
 
-export default function Fruitboek() {
+const BEREIDING: Record<string, string> = {
+  pers: "Persen in een slowjuicer, of mixen in een blender.",
+  mix: "Mixen in de blender. Geeft geen sap in een slowjuicer.",
+  toevoegen: "Roer het door je sapje of mix het mee.",
+};
+
+type Deel = "log" | "gids" | "bewaard";
+
+export default function MijnSapjes() {
   const router = useRouter();
   const cycle = useCycle();
   const boek = boekStore.useHook();
   const bewaard = bewaardStore.useHook();
-  const [tab, setTab] = useState<"boek" | "bewaard">("boek");
+  const log = logStore.useHook();
+  const [deel, setDeel] = useState<Deel>("log");
   const [open, setOpen] = useState<string | null>(null);
+  const [bewerk, setBewerk] = useState<string | null>(null);
+  const [tekst, setTekst] = useState("");
 
   useEffect(() => {
     if (cycle === null) router.replace("/app/welkom");
   }, [cycle, router]);
 
-  useEffect(() => {
-    if (!open) return;
-    const t = setTimeout(() => setOpen(null), 6000);
-    return () => clearTimeout(t);
-  }, [open]);
-
   if (!cycle) return <main className="app-main" aria-busy="true" />;
 
-  const alle = Object.values(ING).sort((a, b) => Number(boek.includes(b.id)) - Number(boek.includes(a.id)) || a.naam.localeCompare(b.naam, "nl"));
+  const alle = Object.values(ING).sort((a, b) => a.naam.localeCompare(b.naam, "nl"));
   const totaal = alle.length;
+  const titel = deel === "log" ? "Mijn sapjes" : deel === "gids" ? "Mijn sapjes" : "Mijn sapjes";
+
+  const nieuwste = [...log].sort((a, b) => b.dag.localeCompare(a.dag));
+  const sleutelVan = (x: LogItem) => `${x.dag}|${[...x.ids].sort().join(",")}`;
+  const groepen: { phase: LogItem["phase"]; items: LogItem[] }[] = [];
+  nieuwste.forEach((x) => {
+    const laatste = groepen[groepen.length - 1];
+    if (laatste && laatste.phase === x.phase) laatste.items.push(x);
+    else groepen.push({ phase: x.phase, items: [x] });
+  });
+
+  const opSoort = (id: string) => log.filter((x) => x.ids.includes(id)).sort((a, b) => b.dag.localeCompare(a.dag));
+
+  function naarGids(id: string) {
+    setOpen(id);
+    setDeel("gids");
+    window.scrollTo(0, 0);
+  }
+
+  function slaOp(x: LogItem) {
+    zetNotitie(x, tekst);
+    setBewerk(null);
+  }
 
   return (
     <main className="app-main">
-      <h1 className="display" style={{ fontSize: 30, lineHeight: 1.05 }}>{tab === "boek" ? "Fruitboek" : "Bewaard"}</h1>
-      <div className="seg2" role="group" aria-label="Kies een onderdeel">
-        <button type="button" aria-pressed={tab === "boek"} onClick={() => setTab("boek")}>Fruitboek</button>
-        <button type="button" aria-pressed={tab === "bewaard"} onClick={() => setTab("bewaard")}>Bewaard</button>
+      <h1 className="display" style={{ fontSize: 30, lineHeight: 1.05 }}>{titel}</h1>
+      <div className="seg3" role="group" aria-label="Kies een onderdeel">
+        <button type="button" aria-pressed={deel === "log"} onClick={() => setDeel("log")}>Logboek</button>
+        <button type="button" aria-pressed={deel === "gids"} onClick={() => { setDeel("gids"); setOpen(null); }}>Gids</button>
+        <button type="button" aria-pressed={deel === "bewaard"} onClick={() => setDeel("bewaard")}>Bewaard</button>
       </div>
 
-      {tab === "boek" ? (
+      {deel === "log" ? (
         <>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--ink-2)" }}>
-            <span>{boek.length} van {totaal} ontdekt</span>
-          </div>
-          <div style={{ height: 10, borderRadius: 5, background: "#eadbe4", overflow: "hidden" }} role="img" aria-label={`${boek.length} van ${totaal} ontdekt`}>
-            <div style={{ height: "100%", width: `${(boek.length / totaal) * 100}%`, background: "var(--violet)", borderRadius: 5 }} />
-          </div>
-          <div className="bk-grid">
-            {alle.map((i) =>
-              boek.includes(i.id) ? (
-                <button key={i.id} type="button" className="bk-k" style={{ background: `${i.kleur}26` }} onClick={() => setOpen(i.id)} aria-label={i.naam}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/fruit/${i.id}.svg`} alt="" />
-                </button>
-              ) : (
-                <div key={i.id} className="bk-k bk-slot" aria-hidden="true">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/fruit/${i.id}.svg`} alt="" />
-                </div>
-              ),
-            )}
-          </div>
-          <span style={{ fontSize: 12.5, lineHeight: 1.45, color: "var(--ink-2)" }}>
-            Fruit komt in je boek zodra je op &ldquo;Ik heb dit gemaakt&rdquo; tikt bij je sapje. De donkere vakjes zijn nog te ontdekken. Tik op een tekening in kleur voor een kort weetje.
-          </span>
-          {open ? (
-            <div className="bk-sheet" role="status">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/fruit/${open}.svg`} alt="" />
-              <span style={{ flex: 1 }}>
-                <strong>{ING[open].naam}</strong>
-                <br />
-                {ING[open].reden}
-              </span>
-              <button type="button" onClick={() => setOpen(null)} aria-label="Sluiten">×</button>
-            </div>
-          ) : null}
+          <span style={{ fontSize: 13, color: "var(--ink-2)" }}>{boek.length} van {totaal} ingrediënten geprobeerd</span>
+          {nieuwste.length === 0 ? (
+            <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--ink-2)" }}>
+              Nog niets in je logboek. Tik bij je sapje op Gemaakt ✓, dan komt het hier te staan.
+            </p>
+          ) : (
+            groepen.map((g, gi) => {
+              const p = getPhase(g.phase);
+              return (
+                <section key={gi} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 14, color: p.dark }}>
+                    <span style={{ width: 10, height: 10, borderRadius: "50%", background: p.color, display: "inline-block" }} />
+                    {PHASES.find((f) => f.id === g.phase)?.name}
+                  </div>
+                  {g.items.map((x) => {
+                    const k = sleutelVan(x);
+                    return (
+                      <div key={k} className="card" style={{ borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                          <strong style={{ fontSize: 15 }}>{dagTekst(x.dag)}</strong>
+                          <span style={{ display: "flex", gap: 4 }} aria-hidden="true">
+                            {x.ids.map((id) => (
+                              <span key={id} style={{ width: 12, height: 12, borderRadius: "50%", background: ING[id].kleur, display: "inline-block" }} />
+                            ))}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: 13, lineHeight: 1.5, color: "var(--ink-2)" }}>
+                          {x.ids.map((id, i) => (
+                            <span key={id}>
+                              <button type="button" className="lg-link" onClick={() => naarGids(id)}>{ING[id].naam}</button>
+                              {i < x.ids.length - 1 ? ", " : ""}
+                            </span>
+                          ))}
+                        </span>
+                        {bewerk === k ? (
+                          <input
+                            autoFocus
+                            type="text"
+                            maxLength={80}
+                            aria-label="Notitie bij dit sapje"
+                            placeholder="Bijvoorbeeld: lekker, vaker"
+                            value={tekst}
+                            onChange={(e) => setTekst(e.target.value)}
+                            onBlur={() => slaOp(x)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") slaOp(x);
+                            }}
+                            style={{ fontSize: 14 }}
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            className="lg-link"
+                            style={{ alignSelf: "flex-start", fontStyle: x.note ? "italic" : "normal", textDecoration: x.note ? "none" : "underline" }}
+                            onClick={() => {
+                              setTekst(x.note ?? "");
+                              setBewerk(k);
+                            }}
+                          >
+                            {x.note || "Notitie toevoegen"}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </section>
+              );
+            })
+          )}
         </>
+      ) : deel === "gids" ? (
+        open ? (
+          (() => {
+            const i = ING[open];
+            const gebruikt = opSoort(open);
+            const fases = fasesMet(open).map((f) => PHASES.find((p) => p.id === f)?.name).filter(Boolean).join(", ");
+            return (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <button type="button" className="lg-link" style={{ alignSelf: "flex-start", fontSize: 14 }} onClick={() => setOpen(null)}>← Alle ingrediënten</button>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <span style={{ width: 64, height: 64, borderRadius: 16, background: `${i.kleur}26`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`/fruit/${i.id}.svg`} alt="" style={{ width: 48, height: 48 }} />
+                  </span>
+                  <div>
+                    <h2 className="display" style={{ fontSize: 24, lineHeight: 1.1 }}>{i.naam}</h2>
+                    <span style={{ fontSize: 13, color: "var(--ink-2)", textTransform: "capitalize" }}>{i.soort}</span>
+                  </div>
+                </div>
+                <p style={{ fontSize: 15, lineHeight: 1.5 }}>{i.reden}</p>
+                {i.waarschuwing ? <p style={{ fontSize: 13, lineHeight: 1.45, fontStyle: "italic", color: "var(--ink-2)" }}>{i.waarschuwing}</p> : null}
+                <div className="card" style={{ borderRadius: 16, padding: "4px 14px" }}>
+                  {[
+                    ["Past bij", fases || "Geen vaste fase"],
+                    ["Bereiding", i.bereiding ? BEREIDING[i.bereiding] : "Mixen in de blender."],
+                    ["In een sapje", AMT[i.id] ?? "Naar smaak"],
+                    ["Gebruikt door jou", gebruikt.length ? `${gebruikt.length} ${gebruikt.length === 1 ? "keer" : "keer"}, laatst op ${datumFmt.format(new Date(gebruikt[0].dag + "T00:00:00"))}` : "Nog niet gemaakt"],
+                  ].map(([a, b]) => (
+                    <div key={a} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "10px 0", borderBottom: "1px solid #f1e7ee", fontSize: 14 }}>
+                      <span style={{ color: "var(--ink-2)" }}>{a}</span>
+                      <span style={{ textAlign: "right", maxWidth: "62%" }}>{b}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 13, color: "var(--ink-2)", marginBottom: 6 }}>Tik op een ingrediënt voor meer.</span>
+            {alle.map((i) => (
+              <button key={i.id} type="button" className="gd-rij" onClick={() => setOpen(i.id)}>
+                <span style={{ width: 40, height: 40, borderRadius: 12, background: `${i.kleur}26`, display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/fruit/${i.id}.svg`} alt="" style={{ width: 30, height: 30 }} />
+                </span>
+                <span style={{ flex: 1, textAlign: "left", fontWeight: 600 }}>{i.naam}</span>
+                {boek.includes(i.id) ? <span style={{ fontSize: 12, color: "var(--ink-2)" }}>Geprobeerd</span> : null}
+              </button>
+            ))}
+          </div>
+        )
       ) : bewaard.length === 0 ? (
         <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--ink-2)" }}>
           Nog niets bewaard. Tik op het hartje bij een sapje dat je lekker vindt.
@@ -97,7 +216,7 @@ export default function Fruitboek() {
                 </div>
                 <span style={{ flex: 1, paddingLeft: 10, display: "flex", flexDirection: "column" }}>
                   <strong style={{ color: p.dark }}>{getRecipe(p.recipes[0])?.name ?? p.label}</strong>
-                  <span style={{ fontSize: 12.5, color: "var(--muted)" }}>Gemaakt op {datumFmt.format(new Date(b.datum + "T00:00:00"))}</span>
+                  <span style={{ fontSize: 12.5, color: "var(--muted)" }}>Bewaard op {datumFmt.format(new Date(b.datum + "T00:00:00"))}</span>
                 </span>
                 <button
                   type="button"

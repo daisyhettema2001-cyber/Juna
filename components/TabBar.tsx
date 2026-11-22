@@ -9,7 +9,7 @@ const TABS = [
   { href: "/app", label: "Vandaag", Icon: IconHome },
   { href: "/app/fases", label: "Fases", Icon: IconCycle },
   { href: "/app/lijstje", label: "Lijstje", Icon: IconCart },
-  { href: "/app/fruitboek", label: "Fruitboek", Icon: IconBook },
+  { href: "/app/fruitboek", label: "Mijn sapjes", Icon: IconBook },
 ];
 
 export default function TabBar() {

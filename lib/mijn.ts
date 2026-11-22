@@ -74,6 +74,21 @@ export const vastStore = maak<string | null>("juna.vast.v1", LEEG_VAST, (v) => (
 const LEEG_BOEK: string[] = [];
 export const boekStore = maak<string[]>("juna.boek.v1", LEEG_BOEK, ids);
 
+/* ---- logboek: wat je als gemaakt hebt afgevinkt ---- */
+export type LogItem = { dag: string; phase: PhaseId; ids: string[]; note?: string };
+const FASEN: string[] = ["menstruatie", "folliculair", "ovulatie", "luteaal"];
+export const logStore = maak<LogItem[]>("juna.log.v1", [], (v) =>
+  Array.isArray(v)
+    ? v
+        .filter((x): x is LogItem => !!x && typeof x.dag === "string" && typeof x.phase === "string" && FASEN.includes(x.phase) && Array.isArray(x.ids))
+        .map((x) => ({ dag: x.dag, phase: x.phase, ids: ids(x.ids), note: typeof x.note === "string" ? x.note.slice(0, 80) : "" }))
+        .filter((x) => x.ids.length)
+    : [],
+);
+export function zetNotitie(item: LogItem, note: string) {
+  logStore.bewaar(logStore.laad().map((x) => (x.dag === item.dag && sleutel(x.ids) === sleutel(item.ids) ? { ...x, note: note.trim().slice(0, 80) } : x)));
+}
+
 /* ---- bewaarde sapjes ---- */
 export type Bewaard = { phase: PhaseId; ids: string[]; datum: string };
 const LEEG_BEWAARD: Bewaard[] = [];
@@ -122,7 +137,7 @@ export function isVandaagGemaakt(set: string[]): boolean {
 }
 
 /** `nieuweIds` is het fruit dat nu voor het eerst in het fruitboek komt (voor de animatie); `terugIds` is wat "Ongedaan maken" weghaalt. */
-export function markeerGemaakt(set: string[]): { nieuw: number; nieuweIds: string[]; terugIds: string[]; alVandaag: boolean } {
+export function markeerGemaakt(set: string[], fase: PhaseId): { nieuw: number; nieuweIds: string[]; terugIds: string[]; alVandaag: boolean } {
   const g = leesGemaakt();
   const k = sleutel(set);
   if (g.sets.includes(k)) return { nieuw: 0, nieuweIds: [], terugIds: g.nieuw?.[k] ?? [], alVandaag: true };
@@ -130,6 +145,7 @@ export function markeerGemaakt(set: string[]): { nieuw: number; nieuweIds: strin
   const nieuw = set.filter((id) => !boek.includes(id));
   schrijfGemaakt({ dag: g.dag, sets: [...g.sets, k], nieuw: { ...g.nieuw, [k]: nieuw } });
   if (nieuw.length) boekStore.bewaar([...boek, ...nieuw]);
+  logStore.bewaar([...logStore.laad(), { dag: g.dag, phase: fase, ids: [...set], note: "" }]);
   return { nieuw: nieuw.length, nieuweIds: nieuw, terugIds: nieuw, alVandaag: false };
 }
 
@@ -140,6 +156,7 @@ export function maakGemaaktOngedaan(set: string[], nieuweIds: string[]): void {
   const rest = { ...g.nieuw };
   delete rest[k];
   schrijfGemaakt({ dag: g.dag, sets: g.sets.filter((x) => x !== k), nieuw: rest });
+  logStore.bewaar(logStore.laad().filter((x) => !(x.dag === g.dag && sleutel(x.ids) === k)));
   if (nieuweIds.length) boekStore.bewaar(boekStore.laad().filter((id) => !nieuweIds.includes(id)));
 }
 
@@ -225,6 +242,7 @@ export function wisAlleMijn() {
   extraStore.wis();
   portiesStore.wis();
   naamStore.wis();
+  logStore.wis();
   try {
     localStorage.removeItem(GEMAAKT_KEY);
     localStorage.removeItem("juna.fruit.set.v1");
