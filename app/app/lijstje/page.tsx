@@ -187,7 +187,7 @@ export default function Lijstje() {
               <span style={{ fontSize: 12, color: "var(--muted)" }}>volgende week</span>
             </div>
             <span style={{ fontSize: 13, lineHeight: 1.45, color: "var(--ink-2)" }}>
-              Volgens je cyclus zit je volgende week waarschijnlijk in je {getPhase(fase).label.toLowerCase()} ({naam}). Dat kan een paar dagen verschuiven.
+              Volgens je cyclus zit je volgende week waarschijnlijk in je {getPhase(fase).label.toLowerCase()}. Dat kan een paar dagen verschuiven.
             </span>
             <div style={{ opacity: vervaag ? 0 : 1, transition: "opacity .18s" }}>
               <Rij set={set} />
