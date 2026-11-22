@@ -749,7 +749,7 @@ p {
 .lg-link{border:none;background:none;padding:0;font:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer;text-align:left}
 .gd-rij{display:flex;align-items:center;gap:12px;width:100%;border:none;background:none;font:inherit;color:inherit;padding:8px 0;border-bottom:1px solid #f1e7ee;cursor:pointer;min-height:56px}
 .lg-input{width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:14px;color:var(--ink);background:#faf5f8;border:1px solid #e6d5df;border-radius:12px;padding:0 12px;min-height:40px}
-.lg-input{font-style:italic}
+.lg-input{font-style:normal}
 .lg-input::placeholder{color:var(--muted);font-style:italic}
 .lg-input:focus,.lg-input:focus-visible{outline:none;border-color:#cdb3c3;box-shadow:0 0 0 3px rgba(46,20,40,.06)}
 .lg-link{font-family:var(--font-body)}
