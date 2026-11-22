@@ -31,7 +31,7 @@ export const ING: Record<string, Ingredient> = {
   lime: { id: "lime", naam: "Limoen", kleur: "#5E9B2E", soort: "fruit", groep: "citrus", rond: true, snede: "limeCut", reden: "Vitamine C en een frisse smaak." },
   carrot: { id: "carrot", naam: "Wortel", kleur: "#E8731A", soort: "groente", reden: "Bètacaroteen, dat je lichaam omzet in vitamine A." },
   pineapple: { id: "pineapple", naam: "Ananas", kleur: "#F3C03B", soort: "fruit", rond: true, reden: "Vitamine C en bromelaïne, een enzym dat eiwitten helpt verteren." },
-  turmeric: { id: "turmeric", naam: "Kurkuma", kleur: "#D9981E", soort: "kruid", groep: "specerij", reden: "Bevat curcumine, een antioxidant. Neem er zwarte peper bij.", waarschuwing: "Heb je galstenen of gebruik je medicijnen? Vraag eerst je huisarts." },
+  turmeric: { id: "turmeric", naam: "Kurkuma", kleur: "#D9981E", soort: "kruid", groep: "specerij", reden: "Bevat curcumine, een antioxidant. Doe er zwarte peper bij.", waarschuwing: "Heb je galstenen of gebruik je medicijnen? Vraag eerst je huisarts." },
   pepper: { id: "pepper", naam: "Zwarte peper", kleur: "#2E1428", soort: "kruid", klein: true, reden: "Helpt je lichaam kurkuma beter op te nemen." },
   blueberry: { id: "blueberry", naam: "Blauwe bes", kleur: "#3B2A78", soort: "fruit", groep: "bes", rond: true, reden: "Antioxidanten en vezels." },
   banana: { id: "banana", naam: "Banaan", kleur: "#F3D36B", soort: "fruit", reden: "Vitamine B6 en kalium; maakt je sapje lekker vol." },
