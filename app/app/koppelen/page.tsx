@@ -7,7 +7,7 @@ import { checkStarts, clearCycle, gemiddelden, loadHistory, saveCycle, saveHisto
 import DatePicker from "@/components/DatePicker";
 import VoorkeurKiezer from "@/components/VoorkeurKiezer";
 import VoorkeurTelling from "@/components/VoorkeurTelling";
-import { wisAlleMijn } from "@/lib/mijn";
+import { naamStore, wisAlleMijn } from "@/lib/mijn";
 import { clearVoorkeuren, saveVoorkeuren, useVoorkeuren } from "@/lib/voorkeuren";
 
 function isoDaysAgo(n: number) {
@@ -39,6 +39,7 @@ export default function Koppelen() {
   const router = useRouter();
   const cycle = useCycle();
   const { allergie, nietLekker } = useVoorkeuren();
+  const [naam, setNaam] = useState("");
   const [start, setStart] = useState("");
   const [today, setToday] = useState<string | undefined>(undefined);
   const [length, setLength] = useState(28);
@@ -49,6 +50,8 @@ export default function Koppelen() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setToday(isoDaysAgo(0));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNaam(naamStore.laad());
     if (cycle) {
       setStart(cycle.lastPeriodStart);
       setLength(cycle.cycleLength);
@@ -78,6 +81,7 @@ export default function Koppelen() {
     if (alle.some((d) => d && d > isoDaysAgo(0))) return setError("Een datum ligt in de toekomst.");
     const fout = checkStarts([...alle].sort().reverse(), isoDaysAgo(0));
     if (fout) return setError(fout);
+    naamStore.bewaar(naam.trim().slice(0, 30));
     saveHistory(eerder.map((r) => ({ start: r.start, periodLength: r.period ? Number(r.period) : undefined })));
     saveCycle({ lastPeriodStart: start, cycleLength: eigenLengte, periodLength: eigenPeriode, irregular: calc?.irregular });
     router.push("/app");
@@ -93,6 +97,10 @@ export default function Koppelen() {
       </div>
 
       <form id="cyclus" onSubmit={submit} className="card" style={{ display: "flex", flexDirection: "column", gap: 16, borderRadius: 22 }} noValidate>
+        <div className="field">
+          <label htmlFor="naam">Hoe mag Juna je noemen? (optioneel)</label>
+          <input id="naam" type="text" autoComplete="given-name" maxLength={30} placeholder="Je voornaam" value={naam} onChange={(e) => setNaam(e.target.value)} />
+        </div>
         <div className="field">
           <label htmlFor="start">Eerste dag van je laatste menstruatie</label>
           <DatePicker id="start" value={start} max={today} onChange={setStart} />

@@ -8,6 +8,7 @@ import FruitRain from "@/components/FruitRain";
 import { IconSparkle, IconWave } from "@/components/Icons";
 import { computeToday, useCycle } from "@/lib/cycle";
 import { getPhase, getRecipe } from "@/lib/data";
+import { naamStore } from "@/lib/mijn";
 import { tipLink, weekTips } from "@/lib/tips";
 import { useVoorkeuren } from "@/lib/voorkeuren";
 
@@ -17,6 +18,7 @@ export default function Vandaag() {
   const cycle = useCycle();
   const router = useRouter();
   const { uitgesloten } = useVoorkeuren();
+  const naam = naamStore.useHook();
 
   useEffect(() => {
     if (cycle === null) router.replace("/app/welkom");
@@ -29,13 +31,16 @@ export default function Vandaag() {
   const recipe = getRecipe(phase.recipes[0])!;
   const raw = fmt.format(new Date());
   const today = raw.charAt(0).toUpperCase() + raw.slice(1);
+  const uur = new Date().getHours();
+  const groet = uur >= 6 && uur < 12 ? "Goedemorgen" : uur >= 12 && uur < 18 ? "Goedemiddag" : "Goedenavond";
+  const voornaam = naam.trim();
 
   return (
     <main className="app-main">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <span style={{ fontSize: 14, color: "var(--muted)" }}>{today}</span>
-          <h1 className="display" style={{ fontSize: 28 }}>Hoi!</h1>
+          <h1 className="display" style={{ fontSize: 28 }}>{voornaam ? `${groet}, ${voornaam}` : `${groet}!`}</h1>
         </div>
         <Link
           href="/app/koppelen"
@@ -43,7 +48,7 @@ export default function Vandaag() {
           className="icon-btn"
           style={{ background: "var(--violet-t)", color: "var(--violet-d)", fontWeight: 800 }}
         >
-          J
+          {voornaam ? voornaam.charAt(0).toUpperCase() : "J"}
         </Link>
       </div>
 
