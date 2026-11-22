@@ -114,6 +114,7 @@ export default function MijnSapjes() {
                           <input
                             autoFocus
                             type="text"
+                            className="lg-input"
                             maxLength={80}
                             aria-label="Notitie bij dit sapje"
                             placeholder="Bijvoorbeeld: lekker, vaker"
@@ -123,7 +124,6 @@ export default function MijnSapjes() {
                             onKeyDown={(e) => {
                               if (e.key === "Enter") slaOp(x);
                             }}
-                            style={{ fontSize: 14 }}
                           />
                         ) : (
                           <button
