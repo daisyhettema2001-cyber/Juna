@@ -136,10 +136,11 @@ function vliegNaarBoek(ids: string[], vanKnop: HTMLElement | null) {
     const dy = d.top + d.height / 2 - 8;
     const knop = vanKnop?.getBoundingClientRect();
     let n = 0;
+    const alle: { id: string; el: HTMLElement }[] = [];
     ids.forEach((id) => {
-      const els = Array.from(document.querySelectorAll<HTMLElement>(`.fruit-stage [data-ing="${id}"]`)).filter((e) => !e.classList.contains("fr-roll-l") && !e.classList.contains("fr-roll-r"));
-      const el = els[0];
-      if (!el) return;
+      document.querySelectorAll<HTMLElement>(`.fruit-stage [data-ing="${id}"]`).forEach((el) => alle.push({ id, el }));
+    });
+    alle.slice(0, 18).forEach(({ id, el }) => {
       const r = el.getBoundingClientRect();
       const zichtbaar = r.bottom > 0 && r.top < window.innerHeight;
       const sx = zichtbaar ? r.left + r.width / 2 : knop ? knop.left + knop.width / 2 : window.innerWidth / 2;
@@ -151,7 +152,7 @@ function vliegNaarBoek(ids: string[], vanKnop: HTMLElement | null) {
       img.setAttribute("aria-hidden", "true");
       img.style.cssText = `position:fixed;z-index:60;left:${sx - size / 2}px;top:${sy - size / 2}px;width:${size}px;height:${size}px;pointer-events:none;will-change:transform`;
       document.body.appendChild(img);
-      const delay = n * 160;
+      const delay = n * 70;
       n++;
       const a = img.animate(
         [
@@ -376,7 +377,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
             style={{ background: phase.dark, opacity: gedaan ? 0.5 : 1, transition: "opacity .25s" }}
             onClick={(e) => {
               const r = markeerGemaakt(current, phaseId);
-              vliegNaarBoek(r.nieuweIds, e.currentTarget);
+              vliegNaarBoek(current, e.currentTarget);
               setGedaan(true);
               setTerug({ set: [...current], ids: r.terugIds });
               setGemaaktMsg(r.alVandaag ? "Staat al in je logboek." : "Toegevoegd aan je logboek.");
