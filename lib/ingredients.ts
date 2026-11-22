@@ -106,7 +106,7 @@ export const COMBOS: Record<PhaseId, string[][]> = {
     ["grapefruit", "orange", "carrot", "pineapple"],
     ["pineapple", "mango", "papaya", "orange"],
     ["strawberry", "pineapple", "orange", "mango"],
-    ["tomato", "carrot", "redpepper", "pepper"],
+    ["tomato", "carrot", "redpepper", "orange"],
     ["redpepper", "carrot", "orange", "turmeric"],
     ["blueberry", "strawberry", "orange", "mango"],
     ["carrot", "orange", "mango", "pumpkinseed"],
@@ -196,7 +196,8 @@ export function kiesSet(phase: PhaseId, seedText: string, vermijd: string[][] = 
     volgorde.find((c) => !vermijd.some((v) => zelfde(v, c)) && (!laatste || overlap(c, laatste) <= 2)) ??
     volgorde.find((c) => !vermijd.some((v) => zelfde(v, c))) ??
     volgorde[0];
-  return [...kandidaat];
+  // Zwarte peper hoort alleen bij kurkuma.
+  return kandidaat.filter((id) => id !== "pepper" || kandidaat.includes("turmeric"));
 }
 
 export function weekId(d = new Date()) {
