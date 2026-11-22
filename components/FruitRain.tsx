@@ -138,9 +138,8 @@ function vliegNaarBoek(ids: string[], vanKnop: HTMLElement | null) {
     let n = 0;
     const alle: { id: string; el: HTMLElement }[] = [];
     ids.forEach((id) => {
-      document.querySelectorAll<HTMLElement>(`.fruit-stage [data-ing="${id}"]`).forEach((el) => {
-        if (!el.classList.contains("fr-roll-l") && !el.classList.contains("fr-roll-r")) alle.push({ id, el });
-      });
+      const el = Array.from(document.querySelectorAll<HTMLElement>(`.fruit-stage [data-ing="${id}"]`)).find((e) => !e.classList.contains("fr-roll-l") && !e.classList.contains("fr-roll-r"));
+      if (el) alle.push({ id, el });
     });
     alle.slice(0, 18).forEach(({ id, el }) => {
       const r = el.getBoundingClientRect();
@@ -160,7 +159,7 @@ function vliegNaarBoek(ids: string[], vanKnop: HTMLElement | null) {
       img.setAttribute("aria-hidden", "true");
       img.style.cssText = `position:fixed;z-index:60;left:${sx - size / 2}px;top:${sy - size / 2}px;width:${size}px;height:${size}px;pointer-events:none;will-change:transform`;
       document.body.appendChild(img);
-      const delay = n * 70;
+      const delay = n * 140;
       n++;
       const a = img.animate(
         [
