@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--f-display", display: "swap" });
-const body = DM_Sans({ subsets: ["latin"], variable: "--f-body", style: ["normal", "italic"], display: "swap" });
 
 export const metadata: Metadata = {
   title: "Juna – sapjes op het ritme van je cyclus",
@@ -30,7 +29,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="nl" className={`${display.variable} ${body.variable}`}>
+    <html lang="nl" className={`${display.variable}`}>
       <body>{children}</body>
     </html>
   );

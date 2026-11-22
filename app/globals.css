@@ -20,7 +20,7 @@
   --violet-t: #ece5f7;
 
   --font-display: var(--f-display), "Bricolage Grotesque", system-ui, sans-serif;
-  --font-body: var(--f-body), "DM Sans", system-ui, sans-serif;
+  --font-body: var(--font-display);
 }
 
 * {
