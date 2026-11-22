@@ -19,8 +19,8 @@
   --violet-d: #553a8f;
   --violet-t: #ece5f7;
 
-  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
-  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-display: var(--f-display), "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: var(--f-body), "DM Sans", system-ui, sans-serif;
 }
 
 * {
@@ -42,7 +42,9 @@ a {
 }
 
 button,
-input {
+input,
+textarea,
+select {
   font-family: inherit;
 }
 
