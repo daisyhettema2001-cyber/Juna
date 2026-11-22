@@ -183,7 +183,7 @@ export default function Lijstje() {
         {set.length ? (
           <div className="card" style={{ background: getPhase(fase).tint, borderRadius: 22, display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-              <span className="display" style={{ fontSize: 24, color: getPhase(fase).dark }}>{naam}, verwacht</span>
+              <span className="display" style={{ fontSize: 24, color: getPhase(fase).dark }}>Sapje {naam}</span>
               <span style={{ fontSize: 12, color: "var(--muted)" }}>volgende week</span>
             </div>
             <span style={{ fontSize: 13, lineHeight: 1.45, color: "var(--ink-2)" }}>
