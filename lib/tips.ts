@@ -27,7 +27,7 @@ export const TIPS: Record<PhaseId, Tip[]> = {
   ovulatie: [
     { soort: "Huid", tekst: "Rond je ovulatie piekt je oestrogeen. In een overzichtsstudie was de huid dan elastischer dan in de fase ervoor." },
     { soort: "Haar", tekst: "Zink zit in pompoenpitten, noten en peulvruchten. Een gevarieerd eetpatroon is een goede basis voor je haar." },
-    { soort: "Beweging", tekst: "Je energie piekt tijdens deze fase voor veel mensen. Maak daar gebruik van en probeer te sporten. Warm wel goed op." },
+    { soort: "Beweging", tekst: "Energie piekt tijdens deze fase voor veel mensen. Maak daar gebruik van en probeer te sporten. Warm wel goed op." },
     { soort: "Voeding", tekst: "Eet kleurrijk: hoe meer kleuren op je bord, hoe gevarieerder je vitamines." },
     { soort: "Drinken", tekst: "Genoeg water helpt je huid soepel te blijven." },
     { soort: "Let op", tekst: "Sommige mensen voelen rond de eisprong een lichte steek. Warmte kan helpen. Bij hevige pijn: huisarts." },
