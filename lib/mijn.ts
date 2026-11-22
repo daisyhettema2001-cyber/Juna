@@ -96,39 +96,50 @@ export function dagISO(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-/* ---- "Ik heb dit gemaakt": alleen dan komt fruit in het fruitboek ---- */
+/* ---- "Gemaakt": alleen dan komt fruit in het fruitboek ---- */
 const GEMAAKT_KEY = "juna.gemaakt.v1";
-export function markeerGemaakt(set: string[]): { nieuw: number; nieuweIds: string[]; alVandaag: boolean } {
-  const vandaag = dagISO();
-  let gedaan: string[] = [];
+type Gemaakt = { dag: string; sets: string[]; nieuw?: Record<string, string[]> };
+function leesGemaakt(): Gemaakt {
   try {
-    const raw = JSON.parse(localStorage.getItem(GEMAAKT_KEY) ?? "null") as { dag: string; sets: string[] } | null;
-    if (raw && raw.dag === vandaag && Array.isArray(raw.sets)) gedaan = raw.sets;
+    const raw = JSON.parse(localStorage.getItem(GEMAAKT_KEY) ?? "null") as Gemaakt | null;
+    if (raw && raw.dag === dagISO() && Array.isArray(raw.sets)) return { dag: raw.dag, sets: raw.sets, nieuw: raw.nieuw ?? {} };
   } catch {
     /* ignore */
   }
-  if (gedaan.includes(sleutel(set))) return { nieuw: 0, nieuweIds: [], alVandaag: true };
+  return { dag: dagISO(), sets: [], nieuw: {} };
+}
+function schrijfGemaakt(g: Gemaakt) {
   try {
-    localStorage.setItem(GEMAAKT_KEY, JSON.stringify({ dag: vandaag, sets: [...gedaan, sleutel(set)] }));
+    localStorage.setItem(GEMAAKT_KEY, JSON.stringify(g));
   } catch {
     /* ignore */
   }
+}
+
+/** Is dit sapje vandaag al als gemaakt afgevinkt? */
+export function isVandaagGemaakt(set: string[]): boolean {
+  return leesGemaakt().sets.includes(sleutel(set));
+}
+
+/** `nieuweIds` is het fruit dat nu voor het eerst in het fruitboek komt (voor de animatie); `terugIds` is wat "Ongedaan maken" weghaalt. */
+export function markeerGemaakt(set: string[]): { nieuw: number; nieuweIds: string[]; terugIds: string[]; alVandaag: boolean } {
+  const g = leesGemaakt();
+  const k = sleutel(set);
+  if (g.sets.includes(k)) return { nieuw: 0, nieuweIds: [], terugIds: g.nieuw?.[k] ?? [], alVandaag: true };
   const boek = boekStore.laad();
   const nieuw = set.filter((id) => !boek.includes(id));
+  schrijfGemaakt({ dag: g.dag, sets: [...g.sets, k], nieuw: { ...g.nieuw, [k]: nieuw } });
   if (nieuw.length) boekStore.bewaar([...boek, ...nieuw]);
-  return { nieuw: nieuw.length, nieuweIds: nieuw, alVandaag: false };
+  return { nieuw: nieuw.length, nieuweIds: nieuw, terugIds: nieuw, alVandaag: false };
 }
 
 /* Haalt "gemaakt" van vandaag weer weg en zet het nieuwe fruit terug uit het fruitboek. */
 export function maakGemaaktOngedaan(set: string[], nieuweIds: string[]): void {
-  try {
-    const raw = JSON.parse(localStorage.getItem(GEMAAKT_KEY) ?? "null") as { dag: string; sets: string[] } | null;
-    if (raw && Array.isArray(raw.sets)) {
-      localStorage.setItem(GEMAAKT_KEY, JSON.stringify({ dag: raw.dag, sets: raw.sets.filter((k) => k !== sleutel(set)) }));
-    }
-  } catch {
-    /* ignore */
-  }
+  const g = leesGemaakt();
+  const k = sleutel(set);
+  const rest = { ...g.nieuw };
+  delete rest[k];
+  schrijfGemaakt({ dag: g.dag, sets: g.sets.filter((x) => x !== k), nieuw: rest });
   if (nieuweIds.length) boekStore.bewaar(boekStore.laad().filter((id) => !nieuweIds.includes(id)));
 }
 

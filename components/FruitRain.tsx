@@ -9,7 +9,7 @@ import { HOUDBAAR } from "@/lib/porties";
 import PimpSap from "@/components/PimpSap";
 import { advies, type Machine } from "@/lib/advies";
 import { PHASES } from "@/lib/data";
-import { bewaardStore, isBewaard, maakGemaaktOngedaan, markeerGemaakt, vastStore, wisselBewaard, zetOpLijst } from "@/lib/mijn";
+import { bewaardStore, isBewaard, isVandaagGemaakt, maakGemaaktOngedaan, markeerGemaakt, vastStore, wisselBewaard, zetOpLijst } from "@/lib/mijn";
 import { ING, fasesMet, metPeper, schudSet, weekId, weekSet, type Ingredient } from "@/lib/ingredients";
 
 const OFFSET = 90; // de lege ruimte boven de stapel halen we weg
@@ -235,7 +235,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
   // Andere set of fase: de "Ongedaan maken"-knop hoort niet meer bij het getoonde sapje.
   useEffect(() => {
     setTerug(null);
-    setGedaan(false);
+    setGedaan(isVandaagGemaakt(current));
     setGemaaktMsg("");
   }, [phaseId, current.join(",")]);
 
@@ -375,12 +375,8 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
               const r = markeerGemaakt(current);
               vliegNaarBoek(r.nieuweIds, e.currentTarget);
               setGedaan(true);
-              if (r.alVandaag) {
-                setGemaaktMsg("Staat al in je fruitboek.");
-                return;
-              }
-              setTerug({ set: [...current], ids: r.nieuweIds });
-              setGemaaktMsg("Toegevoegd aan fruitboek.");
+              setTerug({ set: [...current], ids: r.terugIds });
+              setGemaaktMsg(r.alVandaag ? "Staat al in je fruitboek." : "Toegevoegd aan fruitboek.");
             }}
           >
             Gemaakt ✓
