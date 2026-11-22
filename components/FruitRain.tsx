@@ -324,7 +324,10 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
 
       <div className="fr-info">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <span className="display" style={{ fontSize: 32, color: phase.dark }}>{phase.recipeName}</span>
+          <span className="display" style={{ fontSize: 32, color: phase.dark, lineHeight: 1.05 }}>
+            {phase.recipeName}
+            <span style={{ fontSize: 15, fontWeight: 500, opacity: 0.85, marginLeft: 8, whiteSpace: "nowrap" }}>· {phase.label.toLowerCase()}</span>
+          </span>
           <button type="button" onClick={shuffle} className="fr-shuffle" style={{ background: phase.dark }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
