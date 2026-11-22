@@ -63,6 +63,7 @@ function build(ings: Ingredient[]) {
   const items: Piece[] = [];
   const shadows: { left: number; w: number; delay: number }[] = [];
   let s = 0;
+  const gelegd: Record<string, number> = {};
   const lay = verdeel(stack, rowCounts);
   for (let r = 0; r < rowCounts.length; r++) {
     const count = rowCounts[r];
@@ -72,7 +73,8 @@ function build(ings: Ingredient[]) {
       const ing = stack.find((x) => x.id === lay[r][j])!;
       const left = Math.round(195 + (j - (count - 1) / 2) * 56 - size / 2);
       const delay = 0.1 + r * 0.5 + j * 0.12 + frac(s * 0.31) * 0.08;
-      const file = ing.snede && (j + r) % 2 === 1 ? ing.snede : ing.id;
+      const n = (gelegd[ing.id] = (gelegd[ing.id] ?? 0) + 1);
+      const file = ing.snede && n % 2 === 0 ? ing.snede : ing.id;
       items.push({ left, top, size, rot: ((s * 37) % 13) - 6, delay, dur: 1.5, src: `/fruit/${file}.svg`, ing: ing.id });
       if (r === 0) shadows.push({ left: left + 4, w: size - 8, delay });
       s++;
@@ -87,9 +89,13 @@ function build(ings: Ingredient[]) {
   const left = [mk(kL.id, 6, 44, 1.0, 2.6)];
   const right = [mk(kR.id, 340, 44, 1.25, 2.6)];
   if (smalls.length) {
-    const sm = (n: number) => smalls[n % smalls.length].id;
-    left.push(mk(sm(0), 14, 16, 1.7, 2.2), mk(sm(1), 26, 16, 1.85, 2.2));
-    right.push(mk(sm(0), 356, 16, 1.95, 2.2));
+    // Korreltjes, pitjes en zaadjes blijven liggen: een paar vooraan en aan de zijkanten.
+    const plekken = [128, 252, 20, 356, 158, 226, 34, 342, 100, 280];
+    smalls.forEach((sm, k) => {
+      plekken.filter((_, n) => n % smalls.length === k).slice(0, 5).forEach((x, n) => {
+        items.push({ left: x, top: Math.round(440 - 16 * 0.92) - (n % 2) * 3, size: 16, rot: (n * 53) % 360, delay: 1.7 + n * 0.12 + k * 0.05, dur: 1.5, src: `/fruit/${sm.id}.svg`, ing: sm.id });
+      });
+    });
   }
   return { items, shadows, left, right };
 }

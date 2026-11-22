@@ -31,7 +31,7 @@ export const ING: Record<string, Ingredient> = {
   lime: { id: "lime", naam: "Limoen", kleur: "#5E9B2E", soort: "fruit", groep: "citrus", rond: true, snede: "limeCut", reden: "Vitamine C en een frisse smaak." },
   carrot: { id: "carrot", naam: "Wortel", kleur: "#E8731A", soort: "groente", reden: "Bètacaroteen, dat je lichaam omzet in vitamine A." },
   pineapple: { id: "pineapple", naam: "Ananas", kleur: "#F3C03B", soort: "fruit", rond: true, reden: "Vitamine C en bromelaïne, een enzym dat eiwitten helpt verteren." },
-  turmeric: { id: "turmeric", naam: "Kurkuma", kleur: "#D9981E", soort: "kruid", groep: "specerij", reden: "Bevat curcumine, een antioxidant. Doe er zwarte peper bij.", waarschuwing: "Heb je galstenen of gebruik je medicijnen? Vraag eerst je huisarts." },
+  turmeric: { id: "turmeric", naam: "Kurkuma", kleur: "#D9981E", soort: "kruid", groep: "specerij", reden: "Bevat curcumine, een antioxidant.", waarschuwing: "Heb je galstenen of gebruik je medicijnen? Vraag eerst je huisarts." },
   pepper: { id: "pepper", naam: "Zwarte peper", kleur: "#2E1428", soort: "kruid", klein: true, reden: "Helpt je lichaam kurkuma beter op te nemen." },
   blueberry: { id: "blueberry", naam: "Blauwe bes", kleur: "#3B2A78", soort: "fruit", groep: "bes", rond: true, reden: "Antioxidanten en vezels." },
   banana: { id: "banana", naam: "Banaan", kleur: "#F3D36B", soort: "fruit", reden: "Vitamine B6 en kalium; maakt je sapje lekker vol." },
@@ -98,7 +98,7 @@ export const COMBOS: Record<PhaseId, string[][]> = {
     ["celery", "cucumber", "fennel", "mint"],
   ],
   ovulatie: [
-    ["carrot", "orange", "turmeric", "pepper"],
+    ["carrot", "orange", "apricot", "turmeric"],
     ["carrot", "pineapple", "orange", "turmeric"],
     ["pineapple", "mango", "orange", "turmeric"],
     ["carrot", "orange", "mango", "turmeric"],
@@ -168,10 +168,14 @@ function rng(seed: number) {
   };
 }
 
+const zonderPeper = (a: string[]) => a.filter((x) => x !== "pepper");
 function overlap(a: string[], b: string[]) {
-  return a.filter((x) => b.includes(x)).length;
+  return zonderPeper(a).filter((x) => zonderPeper(b).includes(x)).length;
 }
-const zelfde = (a: string[], b: string[]) => a.length === b.length && a.every((x) => b.includes(x));
+const zelfde = (a0: string[], b0: string[]) => {
+  const a = zonderPeper(a0), b = zonderPeper(b0);
+  return a.length === b.length && a.every((x) => b.includes(x));
+};
 
 /** Kiest een combinatie. `vermijd` zijn eerdere sets waar de nieuwe duidelijk van moet verschillen. */
 export function beschikbaar(phase: PhaseId, uitgesloten: string[] = [], vast?: string | null): string[][] {
@@ -196,8 +200,9 @@ export function kiesSet(phase: PhaseId, seedText: string, vermijd: string[][] = 
     volgorde.find((c) => !vermijd.some((v) => zelfde(v, c)) && (!laatste || overlap(c, laatste) <= 2)) ??
     volgorde.find((c) => !vermijd.some((v) => zelfde(v, c))) ??
     volgorde[0];
-  // Zwarte peper hoort alleen bij kurkuma.
-  return kandidaat.filter((id) => id !== "pepper" || kandidaat.includes("turmeric"));
+  // Zwarte peper hoort alleen bij kurkuma, en komt dan altijd als 5e onderaan.
+  const kern = kandidaat.filter((id) => id !== "pepper");
+  return kern.includes("turmeric") && !uitgesloten.includes("pepper") ? [...kern, "pepper"] : kern;
 }
 
 export function weekId(d = new Date()) {
