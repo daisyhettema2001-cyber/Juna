@@ -138,14 +138,22 @@ function vliegNaarBoek(ids: string[], vanKnop: HTMLElement | null) {
     let n = 0;
     const alle: { id: string; el: HTMLElement }[] = [];
     ids.forEach((id) => {
-      document.querySelectorAll<HTMLElement>(`.fruit-stage [data-ing="${id}"]`).forEach((el) => alle.push({ id, el }));
+      document.querySelectorAll<HTMLElement>(`.fruit-stage [data-ing="${id}"]`).forEach((el) => {
+        if (!el.classList.contains("fr-roll-l") && !el.classList.contains("fr-roll-r")) alle.push({ id, el });
+      });
     });
     alle.slice(0, 18).forEach(({ id, el }) => {
       const r = el.getBoundingClientRect();
       const zichtbaar = r.bottom > 0 && r.top < window.innerHeight;
-      const sx = zichtbaar ? r.left + r.width / 2 : knop ? knop.left + knop.width / 2 : window.innerWidth / 2;
-      const sy = zichtbaar ? r.top + r.height / 2 : knop ? knop.top : window.innerHeight / 2;
-      const size = zichtbaar ? Math.max(40, r.width) : 56;
+      const size = zichtbaar ? Math.max(40, Math.min(r.width, 64)) : 56;
+      const kader = (document.querySelector<HTMLElement>(".app") ?? document.body).getBoundingClientRect();
+      const minX = Math.max(0, kader.left) + size / 2;
+      const maxX = Math.min(window.innerWidth, kader.right) - size / 2;
+      const minY = size / 2;
+      const maxY = window.innerHeight - size / 2;
+      const klem = (v: number, a: number, b: number) => Math.min(Math.max(v, a), Math.max(a, b));
+      const sx = klem(zichtbaar ? r.left + r.width / 2 : knop ? knop.left + knop.width / 2 : window.innerWidth / 2, minX, maxX);
+      const sy = klem(zichtbaar ? r.top + r.height / 2 : knop ? knop.top : window.innerHeight / 2, minY, maxY);
       const img = document.createElement("img");
       img.src = `/fruit/${id}.svg`;
       img.alt = "";
@@ -157,7 +165,7 @@ function vliegNaarBoek(ids: string[], vanKnop: HTMLElement | null) {
       const a = img.animate(
         [
           { transform: "translate(0,0) scale(1)", opacity: 1, offset: 0 },
-          { transform: `translate(${(dx - sx) * 0.25}px,${(dy - sy) * 0.25 - 50}px) scale(1.15)`, opacity: 1, offset: 0.3 },
+          { transform: `translate(${(dx - sx) * 0.3}px,${Math.max((dy - sy) * 0.3 - 30, minY - sy)}px) scale(1.1)`, opacity: 1, offset: 0.3 },
           { transform: `translate(${dx - sx}px,${dy - sy}px) scale(0.28)`, opacity: 0.25, offset: 1 },
         ],
         { duration: 850, delay, easing: "cubic-bezier(.5,0,.7,.4)", fill: "both" },
