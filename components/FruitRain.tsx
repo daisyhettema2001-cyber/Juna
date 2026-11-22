@@ -75,7 +75,8 @@ function build(ings: Ingredient[]) {
       const delay = 0.1 + r * 0.5 + j * 0.12 + frac(s * 0.31) * 0.08;
       const n = (gelegd[ing.id] = (gelegd[ing.id] ?? 0) + 1);
       const file = ing.snede && n % 2 === 0 ? ing.snede : ing.id;
-      items.push({ left, top, size, rot: ((s * 37) % 13) - 6, delay, dur: 1.5, src: `/fruit/${file}.svg`, ing: ing.id });
+      const banaan = ing.id === "banana"; // een banaan ligt op zijn bolle kant
+      items.push({ left, top: banaan ? top + Math.round(size * 0.2) : top, size, rot: banaan ? 135 + (((s * 37) % 13) - 6) / 2 : ((s * 37) % 13) - 6, delay, dur: 1.5, src: `/fruit/${file}.svg`, ing: ing.id });
       if (r === 0) shadows.push({ left: left + 4, w: size - 8, delay });
       s++;
     }
