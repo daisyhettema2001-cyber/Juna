@@ -19,6 +19,8 @@ function Rij({ set }: { set: string[] }) {
           <span className="lj-n">
             {ING[id].naam}
             <small>{AMT[id]}</small>
+            <small style={{ fontSize: 13, lineHeight: 1.4, color: "var(--ink)", marginTop: 2 }}>{ING[id].reden}</small>
+            {ING[id].waarschuwing ? <small style={{ fontSize: 12, lineHeight: 1.35, fontStyle: "italic", marginTop: 2 }}>{ING[id].waarschuwing}</small> : null}
           </span>
         </div>
       ))}
