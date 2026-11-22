@@ -653,6 +653,12 @@ p {
 .fruit-stage>span{position:absolute;display:block}
 .fruit-stage img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
 .fr-shade{border-radius:50%;background:#2E1428;opacity:.24}
+.fr-glow{border-radius:50%;pointer-events:none}
+.fr-glow.fr-anim{animation:fr-glow-in 1.2s ease-out both}
+.fr-ground{border-radius:50%;background:radial-gradient(closest-side,rgba(46,20,40,.16),rgba(46,20,40,0));pointer-events:none}
+.fr-spark{border-radius:50%;opacity:0;pointer-events:none;animation:fr-spark .75s ease-out both}
+@keyframes fr-glow-in{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}
+@keyframes fr-spark{0%{opacity:0;transform:translate(0,0) scale(.3)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1)}}
 .fr-fruit{transform-origin:50% 100%}
 .fr-gone{display:none !important}
 .fr-fruit.fr-anim{animation:fr-fall 1.5s both}
@@ -663,7 +669,8 @@ p {
 .fr-card{text-decoration:none;border-radius:26px;overflow:hidden;display:flex;flex-direction:column}
 .fr-info{padding:0 20px 20px;display:flex;flex-direction:column;gap:8px}
 @media (prefers-reduced-motion: reduce){
-  .fr-fruit.fr-anim,.fr-shade.fr-anim,.fr-reveal{animation:none !important}
+  .fr-fruit.fr-anim,.fr-shade.fr-anim,.fr-reveal,.fr-glow.fr-anim{animation:none !important}
+  .fr-spark{display:none}
   .fr-roll-l,.fr-roll-r{display:none}
 }
 .fr-shuffle{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:999px;color:#fff;font:inherit;font-weight:700;font-size:13px;padding:9px 14px;cursor:pointer;flex:none}

@@ -19,6 +19,42 @@ const frac = (x: number) => x - Math.floor(x);
 
 type Piece = { left: number; top: number; size: number; rot: number; delay: number; dur: number; src: string; ing: string };
 
+const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) || 0);
+const kleurAfstand = (a: string, b: string) => {
+  const x = rgb(a), y = rgb(b);
+  return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]);
+};
+
+// Verdeelt het fruit zo dat gelijke kleuren niet naast of op elkaar komen te liggen.
+function verdeel(stack: Ingredient[], rowCounts: number[]): string[][] {
+  const gebruik: Record<string, number> = {};
+  stack.forEach((i) => (gebruik[i.id] = 0));
+  const rijen: Ingredient[][] = [];
+  rowCounts.forEach((count, r) => {
+    const rij: Ingredient[] = [];
+    for (let j = 0; j < count; j++) {
+      const buren: Ingredient[] = [];
+      if (j > 0) buren.push(rij[j - 1]);
+      if (r > 0) buren.push(rijen[r - 1][j], rijen[r - 1][j + 1]);
+      const min = Math.min(...stack.map((i) => gebruik[i.id]));
+      const kandidaten = stack.filter((i) => gebruik[i.id] <= min + 1);
+      let beste = kandidaten[0];
+      let besteScore = -1;
+      kandidaten.forEach((i, n) => {
+        const score = buren.length ? Math.min(...buren.map((b) => (b.id === i.id ? 0 : kleurAfstand(b.kleur, i.kleur)))) : 100;
+        if (score > besteScore + 0.001 || (Math.abs(score - besteScore) < 0.001 && gebruik[i.id] < gebruik[beste.id] && n >= 0)) {
+          beste = i;
+          besteScore = score;
+        }
+      });
+      gebruik[beste.id]++;
+      rij.push(beste);
+    }
+    rijen.push(rij);
+  });
+  return rijen.map((r) => r.map((i) => i.id));
+}
+
 function build(ings: Ingredient[]) {
   const stack = ings.filter((i) => !i.klein);
   const smalls = ings.filter((i) => i.klein);
@@ -27,12 +63,13 @@ function build(ings: Ingredient[]) {
   const items: Piece[] = [];
   const shadows: { left: number; w: number; delay: number }[] = [];
   let s = 0;
+  const lay = verdeel(stack, rowCounts);
   for (let r = 0; r < rowCounts.length; r++) {
     const count = rowCounts[r];
     const size = rowSizes[r];
     const top = Math.round(440 - size * 0.92 - r * 46);
     for (let j = 0; j < count; j++) {
-      const ing = stack[(j + r * 2) % stack.length];
+      const ing = stack.find((x) => x.id === lay[r][j])!;
       const left = Math.round(195 + (j - (count - 1) / 2) * 56 - size / 2);
       const delay = 0.1 + r * 0.5 + j * 0.12 + frac(s * 0.31) * 0.08;
       const file = ing.snede && (j + r) % 2 === 1 ? ing.snede : ing.id;
@@ -240,6 +277,15 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
   return (
     <>
       <div className="fruit-stage" onClick={replay} role="img" aria-label={`Fruit van deze week: ${ings.map((i) => i.naam).join(", ")}. Tik om opnieuw af te spelen`} key={run}>
+        {leeg ? null : (
+          <>
+            <span className={animate ? "fr-glow fr-anim" : "fr-glow"} style={{ left: cq(25), top: cq(150 - OFFSET), width: cq(340), height: cq(260), background: `radial-gradient(closest-side, ${phase.color}38, ${phase.color}00)` }} />
+            <span className="fr-ground" style={{ left: cq(45), top: cq(430 - OFFSET), width: cq(300), height: cq(18) }} />
+          </>
+        )}
+        {leeg || !animate ? null : [[-46, -34], [0, -52], [46, -34], [-62, 4], [62, 4], [-24, -50], [24, -50]].map(([dx, dy], i) => (
+          <span key={`k${i}`} className="fr-spark" style={{ left: cq(195 - 4), top: cq(300 - OFFSET), width: cq(8), height: cq(8), background: i % 2 ? "#fff" : phase.color, ["--dx" as string]: cq(dx), ["--dy" as string]: cq(dy), animationDelay: `${(2.05 + (i % 3) * 0.05).toFixed(2)}s` }} />
+        ))}
         {leeg ? null : shadows.map((sh, i) => (
           <span
             key={`s${i}`}
