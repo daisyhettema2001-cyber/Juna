@@ -33,22 +33,23 @@ export const TIPS: Record<PhaseId, Tip[]> = {
     { soort: "Let op", tekst: "Sommige mensen voelen rond de eisprong een lichte steek. Warmte kan helpen. Bij hevige pijn: huisarts." },
   ],
   luteaal: [
-    { soort: "Rust", tekst: "Genoeg slaap, regelmatig bewegen en gevarieerd eten horen bij wat de NHS adviseert bij PMS-klachten." },
+    { soort: "Rust", tekst: "Een vast slaapritme helpt je energie stabiel te houden. Probeer 7 tot 8 uur te slapen." },
     { soort: "Voeding", tekst: "Sommige mensen vinden vaker kleine maaltijden prettiger voor hun energie en stemming. Probeer het eens uit." },
     { soort: "Voeding", tekst: "Magnesium zit in noten, zaden, groene bladgroente en volkorenbrood. Er is niet veel bewijs dat supplementen bij PMS werken, eet het dus vooral gewoon via je eten.", bevat: ["almond", "pumpkinseed", "spinach"] },
     { soort: "Beweging", tekst: "Je energie kan tijdens deze fase dalen. Yoga, wandelen of zwemmen sluit daar goed op aan. Luister naar je lichaam." },
     { soort: "Ontspanning", tekst: "Rustige ademhaling, meditatie of een warm bad kunnen helpen als je gespannen bent." },
     { soort: "Trek in zoet", tekst: "Banaan, dadels of een stukje pure chocolade is prima. Hier past een zoet sapje ook bij.", bevat: ["banana", "date", "cacao"] },
-    { soort: "Let op", tekst: "Heftige stemmingsklachten in de dagen voor je menstruatie? Bespreek dat met je huisarts." },
   ],
 };
 
-/** Twee tips voor deze week. Ze blijven de hele week gelijk en wisselen daarna door de lijst. */
+/** Twee tips voor deze week: altijd de energie-/bewegingstip van de fase, plus één die wekelijks wisselt. */
 export function weekTips(phase: PhaseId, uitgesloten: string[] = [], d = new Date()): [Tip, Tip] {
   const lijst = TIPS[phase].filter((t) => !t.bevat?.some((id) => uitgesloten.includes(id)));
+  const beweging = lijst.find((t) => t.soort === "Beweging") ?? lijst[0];
+  const rest = lijst.filter((t) => t !== beweging);
   const [jaar, week] = weekId(d).split("-W").map(Number);
   const n = jaar * 53 + week;
-  return [lijst[(n * 2) % lijst.length], lijst[(n * 2 + 1) % lijst.length]];
+  return [beweging, rest[n % rest.length] ?? beweging];
 }
 
 export function tipLink(tip: Tip): string | null {
