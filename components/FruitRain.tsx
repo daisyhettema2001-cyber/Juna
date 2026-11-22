@@ -205,6 +205,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
   const bewaardLijst = bewaardStore.useHook();
   const [status, setStatus] = useState("");
   const [gedaan, setGedaan] = useState(false);
+  const [gemaaktMsg, setGemaaktMsg] = useState("");
   const [terug, setTerug] = useState<{ set: string[]; ids: string[] } | null>(null);
   const [machine, setMachine] = useState<Machine>(() => loadMachine());
   const [gesloten, setGesloten] = useState<string>("");
@@ -235,6 +236,7 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
   useEffect(() => {
     setTerug(null);
     setGedaan(false);
+    setGemaaktMsg("");
   }, [phaseId, current.join(",")]);
 
   // Eerst de oude stapel weghalen (leeg vak), dan pas de nieuwe laten vallen.
@@ -374,28 +376,33 @@ export default function FruitRain({ phase, uitgesloten = [] }: { phase: Phase & 
               vliegNaarBoek(r.nieuweIds, e.currentTarget);
               setGedaan(true);
               if (r.alVandaag) {
-                setStatus("Staat al in je fruitboek.");
+                setGemaaktMsg("Staat al in je fruitboek.");
                 return;
               }
               setTerug({ set: [...current], ids: r.nieuweIds });
-              setStatus("Toegevoegd aan fruitboek.");
+              setGemaaktMsg("Toegevoegd aan fruitboek.");
             }}
           >
             Gemaakt ✓
           </button>
-          {terug ? (
-            <button
-              type="button"
-              className="fr-undo"
-              onClick={() => {
-                maakGemaaktOngedaan(terug.set, terug.ids);
-                setTerug(null);
-                setGedaan(false);
-                setStatus("Teruggedraaid.");
-              }}
-            >
-              Ongedaan maken
-            </button>
+          {gemaaktMsg ? (
+            <div role="status" aria-live="polite" className="fr-gemaaktmsg">
+              <span>{gemaaktMsg}</span>
+              {terug ? (
+                <button
+                  type="button"
+                  className="fr-undo"
+                  onClick={() => {
+                    maakGemaaktOngedaan(terug.set, terug.ids);
+                    setTerug(null);
+                    setGedaan(false);
+                    setGemaaktMsg("Teruggedraaid.");
+                  }}
+                >
+                  Ongedaan maken
+                </button>
+              ) : null}
+            </div>
           ) : null}
           <div className="fr-acties2">
             <button type="button" onClick={() => setStatus(`${zetOpLijst(current, `${weekId()}:${phaseId}`) ? "Op je boodschappenlijstje gezet." : "Stond al op je lijstje."}`)}>
