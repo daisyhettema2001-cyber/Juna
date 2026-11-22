@@ -66,7 +66,7 @@ export default function MijnSapjes() {
   }
 
   return (
-    <main className="app-main">
+    <main className="app-main mijn">
       <h1 className="display" style={{ fontSize: 30, lineHeight: 1.05 }}>{titel}</h1>
       <div className="seg3" role="group" aria-label="Kies een onderdeel">
         <button type="button" aria-pressed={deel === "log"} onClick={() => setDeel("log")}>Logboek</button>
@@ -86,7 +86,7 @@ export default function MijnSapjes() {
               const p = getPhase(g.phase);
               return (
                 <section key={gi} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 14, color: p.dark }}>
+                  <div className="lg-kop" style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 15, color: p.dark }}>
                     <span style={{ width: 10, height: 10, borderRadius: "50%", background: p.color, display: "inline-block" }} />
                     {PHASES.find((f) => f.id === g.phase)?.name}
                   </div>
@@ -95,7 +95,7 @@ export default function MijnSapjes() {
                     return (
                       <div key={k} className="card" style={{ borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-                          <strong style={{ fontSize: 15 }}>{dagTekst(x.dag)}</strong>
+                          <strong className="lg-kop" style={{ fontSize: 16 }}>{dagTekst(x.dag)}</strong>
                           <span style={{ display: "flex", gap: 4 }} aria-hidden="true">
                             {x.ids.map((id) => (
                               <span key={id} style={{ width: 12, height: 12, borderRadius: "50%", background: ING[id].kleur, display: "inline-block" }} />
