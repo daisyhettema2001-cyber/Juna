@@ -758,3 +758,11 @@ p {
 .lg-link:focus-visible,.gd-rij:focus-visible{outline:2px solid #cdb3c3;outline-offset:2px;border-radius:6px}
 .mijn,.mijn *{font-family:var(--font-body)}
 .mijn h1,.mijn h2,.mijn .display,.mijn .lg-kop{font-family:var(--font-display)}
+
+/* Zacht laadscherm terwijl de gegevens van het toestel worden gelezen */
+.app-main[aria-busy="true"]{position:relative;min-height:70vh}
+.app-main[aria-busy="true"]::before,.app-main[aria-busy="true"]::after{content:"";display:block;border-radius:22px;background:linear-gradient(90deg,#f6e9f0,#fbf1f6,#f6e9f0);background-size:200% 100%;animation:juna-laad 1.4s ease-in-out infinite}
+.app-main[aria-busy="true"]::before{height:34px;width:55%;margin-bottom:16px}
+.app-main[aria-busy="true"]::after{height:260px;width:100%}
+@keyframes juna-laad{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@media (prefers-reduced-motion: reduce){.app-main[aria-busy="true"]::before,.app-main[aria-busy="true"]::after{animation:none}}

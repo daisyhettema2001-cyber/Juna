@@ -7,6 +7,7 @@ import { checkStarts, clearCycle, gemiddelden, loadHistory, saveCycle, saveHisto
 import DatePicker from "@/components/DatePicker";
 import VoorkeurKiezer from "@/components/VoorkeurKiezer";
 import VoorkeurTelling from "@/components/VoorkeurTelling";
+import { downloadBackup, herstelBackup } from "@/lib/backup";
 import { naamStore, wisAlleMijn } from "@/lib/mijn";
 import { clearVoorkeuren, saveVoorkeuren, useVoorkeuren } from "@/lib/voorkeuren";
 
@@ -45,6 +46,7 @@ export default function Koppelen() {
   const [length, setLength] = useState(28);
   const [period, setPeriod] = useState(5);
   const [error, setError] = useState("");
+  const [backupMsg, setBackupMsg] = useState("");
   const [eerder, setEerder] = useState<{ start: string; period: string }[]>([]);
 
   useEffect(() => {
@@ -174,6 +176,35 @@ export default function Koppelen() {
         <span style={{ fontSize: 13, lineHeight: 1.45, color: "var(--ink-2)" }}>
           Je gegevens blijven alleen op dit toestel opgeslagen. Er wordt niets naar een server gestuurd.
         </span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <h2 className="display" style={{ fontSize: 20, lineHeight: 1.1 }}>Je gegevens bewaren</h2>
+        <span style={{ fontSize: 13, lineHeight: 1.45, color: "var(--ink-2)" }}>
+          Alles staat alleen op dit toestel. Bewaar een bestand, dan raak je niets kwijt bij een nieuwe telefoon.
+        </span>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button type="button" className="btn btn-light" style={{ minHeight: 44, borderRadius: 14, fontSize: 14 }} onClick={downloadBackup}>
+            Bewaar mijn gegevens
+          </button>
+          <label className="btn btn-light" style={{ minHeight: 44, borderRadius: 14, fontSize: 14, cursor: "pointer", display: "inline-flex", alignItems: "center" }}>
+            Zet mijn gegevens terug
+            <input
+              type="file"
+              accept="application/json,.json"
+              style={{ display: "none" }}
+              onChange={async (e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (!f) return;
+                const ok = herstelBackup(await f.text());
+                setBackupMsg(ok ? "Teruggezet." : "Dit bestand hoort niet bij Juna.");
+                if (ok) setTimeout(() => window.location.assign("/app"), 700);
+              }}
+            />
+          </label>
+        </div>
+        {backupMsg ? <span role="status" style={{ fontSize: 13, color: "var(--ink-2)" }}>{backupMsg}</span> : null}
       </div>
 
       {cycle && (
