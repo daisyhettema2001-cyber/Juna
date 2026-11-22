@@ -110,34 +110,23 @@ export default function MijnSapjes() {
                             </span>
                           ))}
                         </span>
-                        {bewerk === k ? (
-                          <input
-                            autoFocus
-                            type="text"
-                            className="lg-input"
-                            maxLength={80}
-                            aria-label="Notitie bij dit sapje"
-                            placeholder="Bijvoorbeeld: lekker, vaker"
-                            value={tekst}
-                            onChange={(e) => setTekst(e.target.value)}
-                            onBlur={() => slaOp(x)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") slaOp(x);
-                            }}
-                          />
-                        ) : (
-                          <button
-                            type="button"
-                            className="lg-link"
-                            style={{ alignSelf: "flex-start", fontStyle: x.note ? "italic" : "normal", textDecoration: x.note ? "none" : "underline" }}
-                            onClick={() => {
-                              setTekst(x.note ?? "");
-                              setBewerk(k);
-                            }}
-                          >
-                            {x.note || "Notitie toevoegen"}
-                          </button>
-                        )}
+                        <input
+                          type="text"
+                          className="lg-input"
+                          maxLength={80}
+                          aria-label="Notitie bij dit sapje"
+                          placeholder="Notitie toevoegen"
+                          value={bewerk === k ? tekst : x.note ?? ""}
+                          onFocus={() => {
+                            setTekst(x.note ?? "");
+                            setBewerk(k);
+                          }}
+                          onChange={(e) => setTekst(e.target.value)}
+                          onBlur={() => slaOp(x)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") e.currentTarget.blur();
+                          }}
+                        />
                       </div>
                     );
                   })}
