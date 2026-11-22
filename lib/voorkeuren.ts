@@ -11,6 +11,7 @@ export type Item = { id: string; naam: string; soort: string; zoek: string[] };
 
 const EXTRA: Item[] = [
   { id: "kokos", naam: "Kokos", soort: "vloeistof", zoek: ["kokosmelk", "kokoswater", "kokosnoot"] },
+  { id: "melk", naam: "Melk", soort: "vloeistof", zoek: ["koemelk", "zuivel", "lactose"] },
   { id: "haver", naam: "Haver", soort: "vloeistof", zoek: ["haverdrink", "havermelk", "haverdrank"] },
 ];
 

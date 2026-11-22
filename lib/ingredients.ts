@@ -124,7 +124,7 @@ export const COMBOS: Record<PhaseId, string[][]> = {
     ["papaya", "pear", "mint", "ginger"],
     ["avocado", "spinach", "banana", "cacao"],
     ["blueberry", "raspberry", "banana", "almond"],
-    ["cacao", "raspberry", "date", "almond"],
+    ["cacao", "raspberry", "banana", "date"],
   ],
 };
 
